@@ -196,43 +196,34 @@ class _CameraScannerViewState extends State<CameraScannerView> {
             bottom: 0,
             left: 0,
             right: 0,
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.black.withValues(alpha: 0.8),
-                    Colors.black,
-                  ],
-                ),
-              ),
-              child: Row(
-                children: [
-                  // Gallery button
-                  Expanded(
-                    child: _BottomButton(
-                      icon: Icons.photo_library,
-                      label: 'Gallery',
-                      isPrimary: true,
-                      onTap: () => GalleryPickerHelper.pickAndReturn(
-                        scannerController: controller,
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: Row(
+                  children: [
+                    // Gallery button
+                    Expanded(
+                      child: _BottomButton(
+                        icon: Icons.photo_library,
+                        label: 'Gallery',
+                        isPrimary: true,
+                        onTap: () => GalleryPickerHelper.pickAndReturn(
+                          scannerController: controller,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  // Manual input button
-                  Expanded(
-                    child: _BottomButton(
-                      icon: Icons.keyboard,
-                      label: 'Manual',
-                      isPrimary: false,
-                      onTap: _showManualInput,
+                    const SizedBox(width: 12),
+                    // Manual input button
+                    Expanded(
+                      child: _BottomButton(
+                        icon: Icons.keyboard,
+                        label: 'Manual',
+                        isPrimary: false,
+                        onTap: _showManualInput,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -260,13 +251,13 @@ class _BottomButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
         decoration: BoxDecoration(
           color: isPrimary ? const Color(0xFF5EA500) : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
           border: isPrimary
               ? null
-              : Border.all(color: Colors.white54, width: 1.5),
+              : Border.all(color: Colors.white54, width: 1),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -274,14 +265,14 @@ class _BottomButton extends StatelessWidget {
             Icon(
               icon,
               color: isPrimary ? Colors.black : Colors.white,
-              size: 20,
+              size: 16,
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 4),
             Text(
               label,
               style: TextStyle(
                 color: isPrimary ? Colors.black : Colors.white,
-                fontSize: 15,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
             ),

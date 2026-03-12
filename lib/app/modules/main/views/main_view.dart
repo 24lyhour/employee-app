@@ -26,12 +26,12 @@ class MainView extends GetView<MainController> {
               ProfileView(),
             ],
           )),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.small(
         onPressed: () => _openScanner(context),
         backgroundColor: const Color(0xFF5EA500),
         foregroundColor: Colors.white,
         elevation: 4,
-        child: const Icon(Icons.qr_code_scanner, size: 24),
+        child: const Icon(Icons.qr_code_scanner, size: 20),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: Obx(() => BottomAppBar(
@@ -39,7 +39,7 @@ class MainView extends GetView<MainController> {
             padding: EdgeInsets.zero,
             color: const Color(0xFFF8FFF0),
             shape: const CircularNotchedRectangle(),
-            notchMargin: 8,
+            notchMargin: 6,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -57,7 +57,7 @@ class MainView extends GetView<MainController> {
                   isSelected: controller.currentIndex.value == 1,
                   onTap: () => controller.changePage(1),
                 ),
-                const SizedBox(width: 56), // Space for FAB
+                const SizedBox(width: 48), // Space for FAB
                 _NavItem(
                   icon: Icons.history_outlined,
                   selectedIcon: Icons.history,
