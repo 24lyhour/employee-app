@@ -1,23 +1,48 @@
 import 'package:get/get.dart';
+import '../../../data/models/attendance_model.dart';
+import '../../../data/models/user_model.dart';
+import '../../../data/providers/attendance_provider.dart';
 
 class HomeController extends GetxController {
-  //TODO: Implement HomeController
+  final AttendanceProvider provider;
+  HomeController({required this.provider});
 
-  final count = 0.obs;
+  final user = Rxn<UserModel>();
+  final todayAttendance = Rxn<AttendanceModel>();
+  final stats = <String, int>{}.obs;
+  final isLoading = false.obs;
+
   @override
   void onInit() {
     super.onInit();
+    _loadData();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  Future<void> _loadData() async {
+    isLoading.value = true;
+    try {
+      // Mock user for now
+      user.value = UserModel.mock();
+
+      // Load today's attendance
+      todayAttendance.value = await provider.getTodayAttendance(user.value!.id);
+
+      // Load stats
+      final statsData = await provider.getAttendanceStats(user.value!.id);
+      stats.assignAll(statsData);
+    } finally {
+      isLoading.value = false;
+    }
   }
 
-  @override
-  void onClose() {
-    super.onClose();
+  Future<void> refreshData() async {
+    await _loadData();
   }
 
-  void increment() => count.value++;
+  String get greeting {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+    return 'Good Evening';
+  }
 }
