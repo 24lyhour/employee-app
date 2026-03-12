@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+import '../../../core/utils/gallery_picker_helper.dart';
 import 'camera_scanner_view.dart';
 
 class ScannerView extends StatelessWidget {
@@ -10,25 +10,6 @@ class ScannerView extends StatelessWidget {
     final result = await Get.to<String>(() => const CameraScannerView());
     if (result != null) {
       Get.back(result: result);
-    }
-  }
-
-  Future<void> _pickFromGallery() async {
-    try {
-      final picker = ImagePicker();
-      final image = await picker.pickImage(source: ImageSource.gallery);
-
-      if (image != null) {
-        // In a real app, you would decode the QR from the image
-        // For now, simulate successful scan
-        Get.back(result: 'QR_GALLERY_${DateTime.now().millisecondsSinceEpoch}');
-      }
-    } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to pick image',
-        snackPosition: SnackPosition.BOTTOM,
-      );
     }
   }
 
@@ -125,9 +106,9 @@ class ScannerView extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // Gallery button
+              // Gallery button - using shared helper
               FilledButton.icon(
-                onPressed: _pickFromGallery,
+                onPressed: () => GalleryPickerHelper.pickAndReturn(),
                 icon: const Icon(Icons.photo_library),
                 label: const Text('Upload from Gallery'),
                 style: FilledButton.styleFrom(

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import '../../../core/utils/toast_helper.dart';
+import '../../../core/utils/gallery_picker_helper.dart';
 
 class CameraScannerView extends StatefulWidget {
   const CameraScannerView({super.key});
@@ -19,6 +18,7 @@ class _CameraScannerViewState extends State<CameraScannerView> {
   );
 
   bool _isScanned = false;
+  bool _hasError = false;
 
   @override
   void dispose() {
@@ -36,27 +36,6 @@ class _CameraScannerViewState extends State<CameraScannerView> {
         Get.back(result: barcode.rawValue);
         break;
       }
-    }
-  }
-
-  Future<void> _pickFromGallery() async {
-    try {
-      final picker = ImagePicker();
-      final image = await picker.pickImage(source: ImageSource.gallery);
-      if (image != null) {
-        // Analyze picked image for QR code
-        final result = await controller.analyzeImage(image.path);
-        if (result != null && result.barcodes.isNotEmpty) {
-          final code = result.barcodes.first.rawValue;
-          if (code != null) {
-            Get.back(result: code);
-            return;
-          }
-        }
-        ToastHelper.showWarning('No QR code found in image');
-      }
-    } catch (e) {
-      ToastHelper.showError('Failed to pick image');
     }
   }
 
@@ -96,9 +75,10 @@ class _CameraScannerViewState extends State<CameraScannerView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
+        foregroundColor: Colors.white,
         title: const Text('Scan QR Code'),
         actions: [
           IconButton(
@@ -109,107 +89,95 @@ class _CameraScannerViewState extends State<CameraScannerView> {
                   state.torchState == TorchState.on
                       ? Icons.flash_on
                       : Icons.flash_off,
+                  color: Colors.white,
                 );
               },
             ),
             onPressed: () => controller.toggleTorch(),
           ),
           IconButton(
-            icon: const Icon(Icons.cameraswitch),
+            icon: const Icon(Icons.cameraswitch, color: Colors.white),
             onPressed: () => controller.switchCamera(),
           ),
         ],
       ),
       body: Stack(
         children: [
+          // Camera or Error background
           MobileScanner(
             controller: controller,
             onDetect: _onDetect,
             errorBuilder: (context, error) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (!_hasError) {
+                  setState(() => _hasError = true);
+                }
+              });
+
+              // Only show error message in center (no buttons here)
               return Container(
                 color: Colors.black,
                 child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(32),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(24),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF5EA500).withValues(alpha: 0.2),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.no_photography,
-                            color: Color(0xFF5EA500),
-                            size: 64,
-                          ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF5EA500).withValues(alpha: 0.2),
+                          shape: BoxShape.circle,
                         ),
-                        const SizedBox(height: 24),
-                        Text(
-                          'Camera Not Available',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                color: Colors.white,
-                              ),
+                        child: const Icon(
+                          Icons.no_photography,
+                          color: Color(0xFF5EA500),
+                          size: 64,
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Use Gallery or Manual input instead',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Colors.white70,
-                              ),
-                        ),
-                        const SizedBox(height: 32),
-                        FilledButton.icon(
-                          onPressed: _pickFromGallery,
-                          icon: const Icon(Icons.photo_library),
-                          label: const Text('Upload from Gallery'),
-                          style: FilledButton.styleFrom(
-                            minimumSize: const Size(220, 52),
-                            backgroundColor: const Color(0xFF5EA500),
-                            foregroundColor: Colors.black,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        OutlinedButton.icon(
-                          onPressed: _showManualInput,
-                          icon: const Icon(Icons.keyboard, color: Colors.white),
-                          label: const Text('Enter Manually', style: TextStyle(color: Colors.white)),
-                          style: OutlinedButton.styleFrom(
-                            minimumSize: const Size(220, 52),
-                            side: const BorderSide(color: Colors.white54),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        'Camera Not Available',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              color: Colors.white,
+                            ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Use Gallery or Manual input below',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Colors.white70,
+                            ),
+                      ),
+                    ],
                   ),
                 ),
               );
             },
           ),
-          // Scanner overlay
-          Center(
-            child: Container(
-              width: 250,
-              height: 250,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: const Color(0xFF5EA500),
-                  width: 3,
+
+          // Scanner overlay (only when camera works)
+          if (!_hasError)
+            Center(
+              child: Container(
+                width: 250,
+                height: 250,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: const Color(0xFF5EA500),
+                    width: 3,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                borderRadius: BorderRadius.circular(16),
               ),
             ),
-          ),
-          // Instructions
+
+          // Instructions text
           Positioned(
-            bottom: 120,
+            bottom: 140,
             left: 0,
             right: 0,
             child: Text(
-              'Point camera at QR code',
+              _hasError ? '' : 'Point camera at QR code',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: Colors.white,
@@ -222,25 +190,50 @@ class _CameraScannerViewState extends State<CameraScannerView> {
                   ),
             ),
           ),
-          // Bottom options
+
+          // Bottom buttons - ALWAYS visible (Grid/Row layout)
           Positioned(
-            bottom: 24,
-            left: 24,
-            right: 24,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _OptionButton(
-                  icon: Icons.photo_library,
-                  label: 'Gallery',
-                  onTap: _pickFromGallery,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.8),
+                    Colors.black,
+                  ],
                 ),
-                _OptionButton(
-                  icon: Icons.keyboard,
-                  label: 'Manual',
-                  onTap: _showManualInput,
-                ),
-              ],
+              ),
+              child: Row(
+                children: [
+                  // Gallery button
+                  Expanded(
+                    child: _BottomButton(
+                      icon: Icons.photo_library,
+                      label: 'Gallery',
+                      isPrimary: true,
+                      onTap: () => GalleryPickerHelper.pickAndReturn(
+                        scannerController: controller,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // Manual input button
+                  Expanded(
+                    child: _BottomButton(
+                      icon: Icons.keyboard,
+                      label: 'Manual',
+                      isPrimary: false,
+                      onTap: _showManualInput,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -249,14 +242,16 @@ class _CameraScannerViewState extends State<CameraScannerView> {
   }
 }
 
-class _OptionButton extends StatelessWidget {
+class _BottomButton extends StatelessWidget {
   final IconData icon;
   final String label;
+  final bool isPrimary;
   final VoidCallback onTap;
 
-  const _OptionButton({
+  const _BottomButton({
     required this.icon,
     required this.label,
+    required this.isPrimary,
     required this.onTap,
   });
 
@@ -265,19 +260,30 @@ class _OptionButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: Colors.black54,
-          borderRadius: BorderRadius.circular(24),
+          color: isPrimary ? const Color(0xFF5EA500) : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+          border: isPrimary
+              ? null
+              : Border.all(color: Colors.white54, width: 1.5),
         ),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.white, size: 20),
+            Icon(
+              icon,
+              color: isPrimary ? Colors.black : Colors.white,
+              size: 20,
+            ),
             const SizedBox(width: 8),
             Text(
               label,
-              style: const TextStyle(color: Colors.white, fontSize: 14),
+              style: TextStyle(
+                color: isPrimary ? Colors.black : Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
