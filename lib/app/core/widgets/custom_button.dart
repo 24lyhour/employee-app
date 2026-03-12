@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'clock_loading_widget.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
@@ -23,10 +24,10 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final child = isLoading
-        ? const SizedBox(
-            height: 24,
-            width: 24,
-            child: CircularProgressIndicator(strokeWidth: 2),
+        ? ClockLoadingWidget(
+            size: 24,
+            color: textColor ?? Colors.white,
+            strokeWidth: 2,
           )
         : Row(
             mainAxisAlignment: MainAxisAlignment.center,

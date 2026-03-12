@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/widgets/clock_loading_widget.dart';
 import '../controllers/history_controller.dart';
 import '../widgets/history_card.dart';
 
@@ -44,7 +45,7 @@ class HistoryView extends GetView<HistoryController> {
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {
-                return const Center(child: CircularProgressIndicator());
+                return const Center(child: ClockLoadingWidget(size: 50));
               }
 
               if (controller.attendanceList.isEmpty) {

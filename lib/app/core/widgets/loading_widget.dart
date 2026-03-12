@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'clock_loading_widget.dart';
 
 class LoadingWidget extends StatelessWidget {
   final String? message;
@@ -16,7 +17,7 @@ class LoadingWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(color: color),
+          ClockLoadingWidget(color: color, size: 50),
           if (message != null) ...[
             const SizedBox(height: 16),
             Text(

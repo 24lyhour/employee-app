@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/widgets/clock_loading_widget.dart';
 import '../controllers/home_controller.dart';
 import '../widgets/attendance_status_card.dart';
 import '../widgets/quick_stats_card.dart';
@@ -23,7 +24,7 @@ class HomeView extends GetView<HomeController> {
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: ClockLoadingWidget(size: 50));
         }
 
         return RefreshIndicator(

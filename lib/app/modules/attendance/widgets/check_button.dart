@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/widgets/clock_loading_widget.dart';
 
 class CheckButton extends StatelessWidget {
   final String label;
@@ -37,7 +38,7 @@ class CheckButton extends StatelessWidget {
         ),
         child: isLoading
             ? Center(
-                child: CircularProgressIndicator(color: color),
+                child: ClockLoadingWidget(color: color, size: 60),
               )
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,

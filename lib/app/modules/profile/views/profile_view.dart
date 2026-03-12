@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/widgets/clock_loading_widget.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileView extends GetView<ProfileController> {
@@ -17,7 +18,7 @@ class ProfileView extends GetView<ProfileController> {
       body: Obx(() {
         final user = controller.user.value;
         if (user == null) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: ClockLoadingWidget(size: 50));
         }
 
         return SingleChildScrollView(
