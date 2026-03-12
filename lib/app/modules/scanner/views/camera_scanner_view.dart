@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import '../../../core/utils/toast_helper.dart';
 
 class CameraScannerView extends StatefulWidget {
   const CameraScannerView({super.key});
@@ -52,18 +53,10 @@ class _CameraScannerViewState extends State<CameraScannerView> {
             return;
           }
         }
-        Get.snackbar(
-          'No QR Found',
-          'Could not find QR code in image',
-          snackPosition: SnackPosition.BOTTOM,
-        );
+        ToastHelper.showWarning('No QR code found in image');
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to pick image',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      ToastHelper.showError('Failed to pick image');
     }
   }
 
@@ -103,7 +96,9 @@ class _CameraScannerViewState extends State<CameraScannerView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text('Scan QR Code'),
         actions: [
           IconButton(
@@ -142,12 +137,12 @@ class _CameraScannerViewState extends State<CameraScannerView> {
                         Container(
                           padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF9AE600).withValues(alpha: 0.2),
+                            color: const Color(0xFF5EA500).withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
                             Icons.no_photography,
-                            color: Color(0xFF9AE600),
+                            color: Color(0xFF5EA500),
                             size: 64,
                           ),
                         ),
@@ -173,7 +168,7 @@ class _CameraScannerViewState extends State<CameraScannerView> {
                           label: const Text('Upload from Gallery'),
                           style: FilledButton.styleFrom(
                             minimumSize: const Size(220, 52),
-                            backgroundColor: const Color(0xFF9AE600),
+                            backgroundColor: const Color(0xFF5EA500),
                             foregroundColor: Colors.black,
                           ),
                         ),
@@ -201,7 +196,7 @@ class _CameraScannerViewState extends State<CameraScannerView> {
               height: 250,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: const Color(0xFF9AE600),
+                  color: const Color(0xFF5EA500),
                   width: 3,
                 ),
                 borderRadius: BorderRadius.circular(16),

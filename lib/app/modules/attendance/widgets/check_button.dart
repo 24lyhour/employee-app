@@ -24,12 +24,12 @@ class CheckButton extends StatelessWidget {
         width: 200,
         height: 200,
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
+          color: Colors.white,
           shape: BoxShape.circle,
-          border: Border.all(color: color, width: 4),
+          border: Border.all(color: color.withValues(alpha: 0.3), width: 4),
           boxShadow: [
             BoxShadow(
-              color: color.withValues(alpha: 0.3),
+              color: color.withValues(alpha: 0.15),
               blurRadius: 20,
               spreadRadius: 2,
             ),

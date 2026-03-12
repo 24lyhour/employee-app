@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/utils/toast_helper.dart';
 import '../../../data/models/attendance_model.dart';
 import '../../../data/providers/attendance_provider.dart';
 
@@ -69,21 +69,9 @@ class AttendanceController extends GetxController {
     try {
       final attendance = await provider.checkIn('1');
       todayAttendance.value = attendance;
-      Get.snackbar(
-        'Success',
-        'You have checked in at ${attendance.checkInTimeFormatted}',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
+      ToastHelper.showSuccess('Checked in at ${attendance.checkInTimeFormatted}');
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to check in. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      ToastHelper.showError('Failed to check in. Please try again.');
     } finally {
       isLoading.value = false;
     }
@@ -96,21 +84,9 @@ class AttendanceController extends GetxController {
     try {
       final attendance = await provider.checkOut(todayAttendance.value!);
       todayAttendance.value = attendance;
-      Get.snackbar(
-        'Success',
-        'You have checked out at ${attendance.checkOutTimeFormatted}',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
+      ToastHelper.showSuccess('Checked out at ${attendance.checkOutTimeFormatted}');
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to check out. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      ToastHelper.showError('Failed to check out. Please try again.');
     } finally {
       isLoading.value = false;
     }
@@ -122,24 +98,11 @@ class AttendanceController extends GetxController {
 
     isLoading.value = true;
     try {
-      // Validate QR code here if needed
       final attendance = await provider.checkIn('1');
       todayAttendance.value = attendance;
-      Get.snackbar(
-        'Success',
-        'QR Check-in successful at ${attendance.checkInTimeFormatted}',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
+      ToastHelper.showSuccess('QR Check-in at ${attendance.checkInTimeFormatted}');
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'QR Check-in failed. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      ToastHelper.showError('QR Check-in failed. Please try again.');
     } finally {
       isLoading.value = false;
     }
@@ -150,24 +113,11 @@ class AttendanceController extends GetxController {
 
     isLoading.value = true;
     try {
-      // Validate QR code here if needed
       final attendance = await provider.checkOut(todayAttendance.value!);
       todayAttendance.value = attendance;
-      Get.snackbar(
-        'Success',
-        'QR Check-out successful at ${attendance.checkOutTimeFormatted}',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
+      ToastHelper.showSuccess('QR Check-out at ${attendance.checkOutTimeFormatted}');
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'QR Check-out failed. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      ToastHelper.showError('QR Check-out failed. Please try again.');
     } finally {
       isLoading.value = false;
     }

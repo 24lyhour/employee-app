@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_constants.dart';
-import '../../scanner/views/scanner_view.dart';
 import '../controllers/attendance_controller.dart';
 import '../widgets/check_button.dart';
 
@@ -11,94 +10,86 @@ class AttendanceView extends GetView<AttendanceController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text('Attendance'),
       ),
       body: Obx(() {
         return SingleChildScrollView(
           padding: const EdgeInsets.all(24),
-          child: Column(
-            children: [
-              const SizedBox(height: 32),
-              // Current Time
-              Text(
-                controller.formattedTime,
-                style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                controller.formattedDate,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-              ),
-              const SizedBox(height: 48),
+          child: SizedBox(
+            width: double.infinity,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 32),
+                // Current Time
+                Text(
+                  controller.formattedTime,
+                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  controller.formattedDate,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                ),
+                const SizedBox(height: 48),
 
-              // Check In/Out Button
-              if (controller.canCheckIn)
-                CheckButton(
-                  label: AppStrings.checkIn,
-                  icon: Icons.login,
-                  color: AppColors.checkIn,
-                  onPressed: controller.isLoading.value ? null : controller.checkIn,
-                  isLoading: controller.isLoading.value,
-                )
-              else if (controller.canCheckOut)
-                CheckButton(
-                  label: AppStrings.checkOut,
-                  icon: Icons.logout,
-                  color: AppColors.checkOut,
-                  onPressed: controller.isLoading.value ? null : controller.checkOut,
-                  isLoading: controller.isLoading.value,
-                )
-              else
-                _CompletedCard(attendance: controller.todayAttendance.value),
+                // Check In/Out Button
+                if (controller.canCheckIn)
+                  CheckButton(
+                    label: AppStrings.checkIn,
+                    icon: Icons.login,
+                    color: AppColors.checkIn,
+                    onPressed: controller.isLoading.value ? null : controller.checkIn,
+                    isLoading: controller.isLoading.value,
+                  )
+                else if (controller.canCheckOut)
+                  CheckButton(
+                    label: AppStrings.checkOut,
+                    icon: Icons.logout,
+                    color: AppColors.checkOut,
+                    onPressed: controller.isLoading.value ? null : controller.checkOut,
+                    isLoading: controller.isLoading.value,
+                  )
+                else
+                  _CompletedCard(attendance: controller.todayAttendance.value),
 
-              const SizedBox(height: 24),
-
-              // Scan QR Button
-              if (!controller.isCheckedOut)
-                OutlinedButton.icon(
-                  onPressed: () => _openScanner(context),
-                  icon: const Icon(Icons.qr_code_scanner),
-                  label: const Text('Scan QR Code'),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                // Tap hint
+                if (!controller.isCheckedOut) ...[
+                  const SizedBox(height: 16),
+                  Text(
+                    'Tap to ${controller.canCheckIn ? 'check in' : 'check out'}',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                   ),
-                ),
+                ],
 
-              const SizedBox(height: 32),
+                const SizedBox(height: 32),
 
-              // Today's Status Card
-              if (controller.todayAttendance.value != null)
-                _TodayStatusCard(
-                  checkInTime: controller.todayAttendance.value!.checkInTimeFormatted,
-                  checkOutTime: controller.todayAttendance.value!.checkOutTimeFormatted,
-                  isCheckedIn: controller.isCheckedIn,
-                  isCheckedOut: controller.isCheckedOut,
-                ),
-            ],
+                // Today's Status Card
+                if (controller.todayAttendance.value != null)
+                  _TodayStatusCard(
+                    checkInTime: controller.todayAttendance.value!.checkInTimeFormatted,
+                    checkOutTime: controller.todayAttendance.value!.checkOutTimeFormatted,
+                    isCheckedIn: controller.isCheckedIn,
+                    isCheckedOut: controller.isCheckedOut,
+                  ),
+              ],
+            ),
           ),
         );
       }),
     );
   }
 
-  void _openScanner(BuildContext context) async {
-    final result = await Get.to<String>(() => const ScannerView());
-
-    if (result != null) {
-      // Process QR code result
-      if (controller.canCheckIn) {
-        controller.checkInWithQR(result);
-      } else if (controller.canCheckOut) {
-        controller.checkOutWithQR(result);
-      }
-    }
-  }
 }
 
 class _CompletedCard extends StatelessWidget {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/utils/toast_helper.dart';
 import '../../../data/models/user_model.dart';
 import '../../../data/providers/auth_provider.dart';
 import '../../../routes/app_pages.dart';
@@ -98,22 +99,10 @@ class AuthController extends GetxController {
         _clearFields();
         Get.offAllNamed(Routes.MAIN);
       } else {
-        Get.snackbar(
-          'Error',
-          'Invalid email or password',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        ToastHelper.showError('Invalid email or password');
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'An error occurred. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      ToastHelper.showError('An error occurred. Please try again.');
     } finally {
       isLoading.value = false;
     }
@@ -136,22 +125,10 @@ class AuthController extends GetxController {
         _clearFields();
         Get.offAllNamed(Routes.MAIN);
       } else {
-        Get.snackbar(
-          'Error',
-          'Registration failed. Please try again.',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        ToastHelper.showError('Registration failed. Please try again.');
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'An error occurred. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      ToastHelper.showError('An error occurred. Please try again.');
     } finally {
       isLoading.value = false;
     }

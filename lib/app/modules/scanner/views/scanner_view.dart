@@ -72,7 +72,9 @@ class ScannerView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         title: const Text('Scan QR Code'),
       ),
       body: Center(
@@ -84,13 +86,13 @@ class ScannerView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(32),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF9AE600).withValues(alpha: 0.2),
+                  color: const Color(0xFF5EA500).withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.qr_code_scanner,
                   size: 80,
-                  color: Color(0xFF9AE600),
+                  color: Color(0xFF5EA500),
                 ),
               ),
               const SizedBox(height: 32),
@@ -117,7 +119,7 @@ class ScannerView extends StatelessWidget {
                 label: const Text('Scan with Camera'),
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(250, 56),
-                  backgroundColor: const Color(0xFF9AE600),
+                  backgroundColor: const Color(0xFF5EA500),
                   foregroundColor: Colors.black,
                 ),
               ),

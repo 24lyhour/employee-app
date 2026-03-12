@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/utils/toast_helper.dart';
 import '../../home/views/home_view.dart';
 import '../../attendance/views/attendance_view.dart';
 import '../../history/views/history_view.dart';
@@ -15,6 +16,7 @@ class MainView extends GetView<MainController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Obx(() => IndexedStack(
             index: controller.currentIndex.value,
             children: const [
@@ -24,19 +26,20 @@ class MainView extends GetView<MainController> {
               ProfileView(),
             ],
           )),
-      floatingActionButton: FloatingActionButton.small(
+      floatingActionButton: FloatingActionButton(
         onPressed: () => _openScanner(context),
-        backgroundColor: const Color(0xFF9AE600),
-        foregroundColor: Colors.black,
+        backgroundColor: const Color(0xFF5EA500),
+        foregroundColor: Colors.white,
         elevation: 4,
-        child: const Icon(Icons.qr_code_scanner, size: 20),
+        child: const Icon(Icons.qr_code_scanner, size: 24),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: Obx(() => BottomAppBar(
-            height: 60,
+            height: 65,
             padding: EdgeInsets.zero,
+            color: const Color(0xFFF8FFF0),
             shape: const CircularNotchedRectangle(),
-            notchMargin: 6,
+            notchMargin: 8,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -85,11 +88,7 @@ class MainView extends GetView<MainController> {
       } else if (attendanceController.canCheckOut) {
         attendanceController.checkOutWithQR(result);
       } else {
-        Get.snackbar(
-          'Info',
-          'You have already completed attendance for today',
-          snackPosition: SnackPosition.BOTTOM,
-        );
+        ToastHelper.showInfo('You have already completed attendance for today');
       }
     }
   }
@@ -112,34 +111,38 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isSelected
-        ? Theme.of(context).colorScheme.primary
-        : Theme.of(context).colorScheme.onSurfaceVariant;
+    final primaryColor = const Color(0xFF5EA500);
+    final unselectedColor = const Color(0xFF6B7280);
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              isSelected ? selectedIcon : icon,
-              color: color,
-              size: 22,
-            ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10,
-                color: color,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        splashColor: primaryColor.withValues(alpha: 0.2),
+        highlightColor: primaryColor.withValues(alpha: 0.1),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                isSelected ? selectedIcon : icon,
+                color: isSelected ? primaryColor : unselectedColor,
+                size: 24,
               ),
-            ),
-          ],
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: isSelected ? primaryColor : unselectedColor,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
