@@ -26,53 +26,49 @@ class MainView extends GetView<MainController> {
               ProfileView(),
             ],
           )),
-      floatingActionButton: FloatingActionButton.small(
-        onPressed: () => _openScanner(context),
-        backgroundColor: const Color(0xFF5EA500),
-        foregroundColor: Colors.white,
-        elevation: 4,
-        child: const Icon(Icons.qr_code_scanner, size: 20),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: Obx(() => BottomAppBar(
-            height: 65,
-            padding: EdgeInsets.zero,
-            color: const Color(0xFFF8FFF0),
-            shape: const CircularNotchedRectangle(),
-            notchMargin: 6,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _NavItem(
-                  icon: Icons.home_outlined,
-                  selectedIcon: Icons.home,
-                  label: AppStrings.home,
-                  isSelected: controller.currentIndex.value == 0,
-                  onTap: () => controller.changePage(0),
-                ),
-                _NavItem(
-                  icon: Icons.fingerprint_outlined,
-                  selectedIcon: Icons.fingerprint,
-                  label: AppStrings.attendance,
-                  isSelected: controller.currentIndex.value == 1,
-                  onTap: () => controller.changePage(1),
-                ),
-                const SizedBox(width: 48), // Space for FAB
-                _NavItem(
-                  icon: Icons.history_outlined,
-                  selectedIcon: Icons.history,
-                  label: AppStrings.history,
-                  isSelected: controller.currentIndex.value == 2,
-                  onTap: () => controller.changePage(2),
-                ),
-                _NavItem(
-                  icon: Icons.person_outlined,
-                  selectedIcon: Icons.person,
-                  label: AppStrings.profile,
-                  isSelected: controller.currentIndex.value == 3,
-                  onTap: () => controller.changePage(3),
-                ),
-              ],
+      bottomNavigationBar: Obx(() => Container(
+            padding: const EdgeInsets.only(top: 8, bottom: 8),
+            decoration: const BoxDecoration(
+              color: Color(0xFFF8FFF0),
+              border: Border(top: BorderSide(color: Color(0xFFE5E7EB), width: 0.5)),
+            ),
+            child: SafeArea(
+              top: false,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _NavItem(
+                    icon: Icons.home_outlined,
+                    selectedIcon: Icons.home,
+                    label: AppStrings.home,
+                    isSelected: controller.currentIndex.value == 0,
+                    onTap: () => controller.changePage(0),
+                  ),
+                  _NavItem(
+                    icon: Icons.fingerprint_outlined,
+                    selectedIcon: Icons.fingerprint,
+                    label: AppStrings.attendance,
+                    isSelected: controller.currentIndex.value == 1,
+                    onTap: () => controller.changePage(1),
+                  ),
+                  // Center scan button
+                  _ScanButton(onTap: () => _openScanner(context)),
+                  _NavItem(
+                    icon: Icons.history_outlined,
+                    selectedIcon: Icons.history,
+                    label: AppStrings.history,
+                    isSelected: controller.currentIndex.value == 2,
+                    onTap: () => controller.changePage(2),
+                  ),
+                  _NavItem(
+                    icon: Icons.person_outlined,
+                    selectedIcon: Icons.person,
+                    label: AppStrings.profile,
+                    isSelected: controller.currentIndex.value == 3,
+                    onTap: () => controller.changePage(3),
+                  ),
+                ],
+              ),
             ),
           )),
     );
@@ -122,7 +118,7 @@ class _NavItem extends StatelessWidget {
         splashColor: primaryColor.withValues(alpha: 0.2),
         highlightColor: primaryColor.withValues(alpha: 0.1),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -130,19 +126,52 @@ class _NavItem extends StatelessWidget {
               Icon(
                 isSelected ? selectedIcon : icon,
                 color: isSelected ? primaryColor : unselectedColor,
-                size: 24,
+                size: 22,
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 2),
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 11,
+                  fontSize: 10,
                   color: isSelected ? primaryColor : unselectedColor,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ScanButton extends StatelessWidget {
+  final VoidCallback onTap;
+
+  const _ScanButton({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: const Color(0xFF5EA500),
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF5EA500).withValues(alpha: 0.3),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: const Icon(
+          Icons.qr_code_scanner,
+          color: Colors.white,
+          size: 22,
         ),
       ),
     );
