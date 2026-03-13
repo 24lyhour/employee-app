@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/widgets/clock_loading_widget.dart';
+import '../../../routes/app_pages.dart';
 import '../controllers/home_controller.dart';
 import '../widgets/attendance_status_card.dart';
 import '../widgets/quick_stats_card.dart';
@@ -16,6 +17,11 @@ class HomeView extends GetView<HomeController> {
         backgroundColor: Colors.white,
         title: const Text('Dashboard'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.assignment_outlined),
+            tooltip: 'Request Permission',
+            onPressed: () => Get.toNamed(Routes.STAFF_REQUEST_PERMISSION),
+          ),
           IconButton(
             icon: const Icon(Icons.notifications_outlined),
             onPressed: () {},

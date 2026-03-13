@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/widgets/clock_loading_widget.dart';
+import '../../../routes/app_pages.dart';
 import '../controllers/profile_controller.dart';
 
 class ProfileView extends GetView<ProfileController> {
@@ -101,6 +102,16 @@ class ProfileView extends GetView<ProfileController> {
                 onTap: () {
                   // TODO: Show about dialog
                 },
+              ),
+              _MenuItem(
+                icon: Icons.assignment_outlined,
+                label: 'Request Permission',
+                onTap: () => Get.toNamed(Routes.STAFF_REQUEST_PERMISSION),
+              ),
+              _MenuItem(
+                icon: Icons.settings_outlined,
+                label: 'Settings',
+                onTap: () => Get.toNamed(Routes.SETTING),
               ),
               const SizedBox(height: 16),
               // Logout
