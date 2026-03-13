@@ -14,20 +14,20 @@ class StatusBadge extends StatelessWidget {
     final config = _getStatusConfig(status);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: config.bgColor,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(config.icon, size: 14, color: config.textColor),
-          const SizedBox(width: 4),
+          Icon(config.icon, size: 12, color: config.textColor),
+          const SizedBox(width: 3),
           Text(
             config.text,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 10,
               color: config.textColor,
               fontWeight: FontWeight.w600,
             ),

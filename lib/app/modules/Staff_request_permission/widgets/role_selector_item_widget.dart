@@ -21,8 +21,8 @@ class RoleSelectorItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.all(14),
+        margin: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: isSelected
               ? _primaryColor.withValues(alpha: 0.08)
@@ -51,20 +51,20 @@ class RoleSelectorItem extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: isSelected
                     ? _primaryColor.withValues(alpha: 0.15)
                     : Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
                 _getRoleIcon(role.id),
-                size: 22,
+                size: 18,
                 color: isSelected ? _primaryColor : Colors.grey.shade600,
               ),
             ),
-            const SizedBox(width: 14),
+            const SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,7 +74,7 @@ class RoleSelectorItem extends StatelessWidget {
                     style: TextStyle(
                       color: isSelected ? _primaryColor : Colors.grey.shade800,
                       fontWeight: FontWeight.w600,
-                      fontSize: 15,
+                      fontSize: 13,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -82,15 +82,15 @@ class RoleSelectorItem extends StatelessWidget {
                     role.description,
                     style: TextStyle(
                       color: Colors.grey.shade500,
-                      fontSize: 12,
+                      fontSize: 11,
                     ),
                   ),
                 ],
               ),
             ),
             Container(
-              width: 24,
-              height: 24,
+              width: 20,
+              height: 20,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: isSelected ? _primaryColor : Colors.transparent,
@@ -102,7 +102,7 @@ class RoleSelectorItem extends StatelessWidget {
               child: isSelected
                   ? const Icon(
                       Icons.check,
-                      size: 16,
+                      size: 14,
                       color: Colors.white,
                     )
                   : null,

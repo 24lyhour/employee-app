@@ -132,10 +132,10 @@ class StaffRequestPermissionView extends GetView<StaffRequestPermissionControlle
               ],
             ),
             if (controller.totalDays > 0) ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
@@ -143,31 +143,31 @@ class StaffRequestPermissionView extends GetView<StaffRequestPermissionControlle
                       _primaryColor.withValues(alpha: 0.05),
                     ],
                   ),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: _primaryColor.withValues(alpha: 0.2)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(6),
+                      padding: const EdgeInsets.all(5),
                       decoration: BoxDecoration(
                         color: _primaryColor.withValues(alpha: 0.15),
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
                         Icons.timelapse,
-                        size: 18,
+                        size: 14,
                         color: _primaryColor,
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 8),
                     Text(
                       'Total Duration: ${controller.totalDays} day${controller.totalDays > 1 ? 's' : ''}',
                       style: const TextStyle(
                         color: _primaryColor,
                         fontWeight: FontWeight.w600,
-                        fontSize: 15,
+                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -181,38 +181,40 @@ class StaffRequestPermissionView extends GetView<StaffRequestPermissionControlle
   Widget _buildReasonField() {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.shade100,
-            blurRadius: 8,
+            blurRadius: 6,
             offset: const Offset(0, 2),
           ),
         ],
       ),
       child: TextFormField(
         controller: controller.reasonController,
-        maxLines: 4,
+        maxLines: 3,
+        style: const TextStyle(fontSize: 12),
         validator: controller.validateReason,
         decoration: InputDecoration(
           hintText: 'Please describe your reason for this request...',
-          hintStyle: TextStyle(color: Colors.grey.shade400),
+          hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 12),
           filled: true,
           fillColor: Colors.white,
+          contentPadding: const EdgeInsets.all(12),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(color: Colors.grey.shade200),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(color: Colors.grey.shade200),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
             borderSide: const BorderSide(color: _primaryColor, width: 2),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(10),
             borderSide: const BorderSide(color: Colors.red),
           ),
         ),
@@ -221,56 +223,63 @@ class StaffRequestPermissionView extends GetView<StaffRequestPermissionControlle
   }
 
   Widget _buildSubmitButton() {
-    return Obx(() => Container(
+    return Obx(() {
+      final isEnabled = !controller.isLoading.value && controller.selectedRole.value != null;
+      return Container(
           width: double.infinity,
-          height: 56,
+          height: 46,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: _primaryColor.withValues(alpha: 0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: isEnabled
+                ? [
+                    BoxShadow(
+                      color: _primaryColor.withValues(alpha: 0.3),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ]
+                : null,
           ),
           child: ElevatedButton(
-            onPressed: controller.isLoading.value ? null : controller.submitRequest,
+            onPressed: (controller.isLoading.value || controller.selectedRole.value == null)
+                ? null
+                : controller.submitRequest,
             style: ElevatedButton.styleFrom(
               backgroundColor: _primaryColor,
               foregroundColor: Colors.white,
               elevation: 0,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
               ),
               disabledBackgroundColor: _primaryColor.withValues(alpha: 0.6),
             ),
             child: controller.isLoading.value
                 ? const SizedBox(
-                    width: 24,
-                    height: 24,
+                    width: 20,
+                    height: 20,
                     child: CircularProgressIndicator(
-                      strokeWidth: 2.5,
+                      strokeWidth: 2,
                       valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                     ),
                   )
                 : const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.send_rounded, size: 20),
-                      SizedBox(width: 10),
+                      Icon(Icons.send_rounded, size: 16),
+                      SizedBox(width: 8),
                       Text(
                         'Submit Request',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5,
+                          letterSpacing: 0.3,
                         ),
                       ),
                     ],
                   ),
           ),
-        ));
+        );
+    });
   }
 
   Widget _buildHistorySection() {

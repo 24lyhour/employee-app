@@ -16,14 +16,15 @@ class SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 20, color: _primaryColor),
-        const SizedBox(width: 8),
+        Icon(icon, size: 16, color: _primaryColor),
+        const SizedBox(width: 6),
         Text(
           title,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: Colors.grey.shade800,
-              ),
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey.shade700,
+          ),
         ),
       ],
     );
