@@ -23,6 +23,7 @@ class AuthController extends GetxController {
   final isLoading = false.obs;
   final isPasswordVisible = false.obs;
   final isConfirmPasswordVisible = false.obs;
+  final rememberMe = false.obs;
   final currentUser = Rxn<UserModel>();
 
   @override
@@ -40,6 +41,10 @@ class AuthController extends GetxController {
 
   void toggleConfirmPasswordVisibility() {
     isConfirmPasswordVisible.value = !isConfirmPasswordVisible.value;
+  }
+
+  void toggleRememberMe() {
+    rememberMe.value = !rememberMe.value;
   }
 
   // Validators

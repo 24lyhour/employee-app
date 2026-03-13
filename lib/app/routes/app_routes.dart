@@ -11,6 +11,8 @@ abstract class Routes {
   static const HISTORY = _Paths.HISTORY;
   static const PROFILE = _Paths.PROFILE;
   static const SCANNER = _Paths.SCANNER;
+  static const STAFF_REQUEST_PERMISSION = _Paths.STAFF_REQUEST_PERMISSION;
+  static const SETTING = _Paths.SETTING;
 }
 
 abstract class _Paths {
@@ -24,4 +26,6 @@ abstract class _Paths {
   static const HISTORY = '/history';
   static const PROFILE = '/profile';
   static const SCANNER = '/scanner';
+  static const STAFF_REQUEST_PERMISSION = '/staff-request-permission';
+  static const SETTING = '/setting';
 }
