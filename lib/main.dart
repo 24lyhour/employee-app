@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_flavor/flutter_flavor.dart';
 import 'package:get/get.dart';
 
+import 'app/core/theme/app_theme.dart';
 import 'app/routes/app_pages.dart';
 
 void main() {
@@ -17,10 +18,8 @@ class MyApp extends StatelessWidget {
       child: GetMaterialApp(
         title: 'Employee App',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
         initialRoute: AppPages.INITIAL,
         getPages: AppPages.routes,
       ),
