@@ -1,0 +1,134 @@
+import 'package:flutter/material.dart';
+import '../data/models/permission_request_model.dart';
+
+class RoleSelectorItem extends StatelessWidget {
+  final RoleOption role;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const RoleSelectorItem({
+    super.key,
+    required this.role,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  static const _primaryColor = Color(0xFF5EA500);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? _primaryColor.withValues(alpha: 0.08)
+              : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? _primaryColor : Colors.grey.shade200,
+            width: isSelected ? 2 : 1,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: _primaryColor.withValues(alpha: 0.15),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : [
+                  BoxShadow(
+                    color: Colors.grey.shade100,
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
+                  ),
+                ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? _primaryColor.withValues(alpha: 0.15)
+                    : Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                _getRoleIcon(role.id),
+                size: 22,
+                color: isSelected ? _primaryColor : Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    role.name,
+                    style: TextStyle(
+                      color: isSelected ? _primaryColor : Colors.grey.shade800,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    role.description,
+                    style: TextStyle(
+                      color: Colors.grey.shade500,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isSelected ? _primaryColor : Colors.transparent,
+                border: Border.all(
+                  color: isSelected ? _primaryColor : Colors.grey.shade300,
+                  width: 2,
+                ),
+              ),
+              child: isSelected
+                  ? const Icon(
+                      Icons.check,
+                      size: 16,
+                      color: Colors.white,
+                    )
+                  : null,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  IconData _getRoleIcon(String roleId) {
+    switch (roleId) {
+      case 'leave':
+        return Icons.beach_access;
+      case 'overtime':
+        return Icons.more_time;
+      case 'remote':
+        return Icons.home_work;
+      case 'early_leave':
+        return Icons.exit_to_app;
+      case 'late_arrival':
+        return Icons.schedule;
+      case 'other':
+        return Icons.more_horiz;
+      default:
+        return Icons.help_outline;
+    }
+  }
+}
