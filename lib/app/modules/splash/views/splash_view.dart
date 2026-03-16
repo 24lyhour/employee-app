@@ -272,7 +272,7 @@ class _AnimatedSplashContentState extends State<_AnimatedSplashContent>
                     _AnimatedLine(animation: _taglineOpacity),
                     const SizedBox(width: 12),
                     Text(
-                      'Attendance Made Easy',
+                      'attendance_made_easy'.tr,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             color: AppColors.textSecondary,
                             fontWeight: FontWeight.w500,
@@ -301,7 +301,7 @@ class _AnimatedSplashContentState extends State<_AnimatedSplashContent>
                   const ClockLoadingWidget(size: 50),
                   const SizedBox(height: 20),
                   Text(
-                    'Please wait...',
+                    'please_wait'.tr,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: AppColors.textLight,
                           fontWeight: FontWeight.w400,
@@ -326,14 +326,14 @@ class _AnimatedSplashContentState extends State<_AnimatedSplashContent>
                 child: Column(
                   children: [
                     Text(
-                      'Powered by',
+                      'powered_by'.tr,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: AppColors.textLight,
                           ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Your Company',
+                      'your_company'.tr,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: AppColors.textSecondary,
                             fontWeight: FontWeight.w600,

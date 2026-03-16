@@ -13,7 +13,7 @@ class AttendanceView extends GetView<AttendanceController> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text('Attendance'),
+        title: Text('attendance'.tr),
       ),
       body: Obx(() {
         return SingleChildScrollView(
@@ -24,7 +24,6 @@ class AttendanceView extends GetView<AttendanceController> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 32),
-                // Current Time
                 Text(
                   controller.formattedTime,
                   style: Theme.of(context).textTheme.displayLarge?.copyWith(
@@ -40,11 +39,9 @@ class AttendanceView extends GetView<AttendanceController> {
                       ),
                 ),
                 const SizedBox(height: 48),
-
-                // Check In/Out Button
                 if (controller.canCheckIn)
                   CheckButton(
-                    label: AppStrings.checkIn,
+                    label: 'check_in'.tr,
                     icon: Icons.login,
                     color: AppColors.checkIn,
                     onPressed: controller.isLoading.value ? null : controller.checkIn,
@@ -52,7 +49,7 @@ class AttendanceView extends GetView<AttendanceController> {
                   )
                 else if (controller.canCheckOut)
                   CheckButton(
-                    label: AppStrings.checkOut,
+                    label: 'check_out'.tr,
                     icon: Icons.logout,
                     color: AppColors.checkOut,
                     onPressed: controller.isLoading.value ? null : controller.checkOut,
@@ -60,21 +57,16 @@ class AttendanceView extends GetView<AttendanceController> {
                   )
                 else
                   _CompletedCard(attendance: controller.todayAttendance.value),
-
-                // Tap hint
                 if (!controller.isCheckedOut) ...[
                   const SizedBox(height: 16),
                   Text(
-                    'Tap to ${controller.canCheckIn ? 'check in' : 'check out'}',
+                    controller.canCheckIn ? 'tap_to_check_in'.tr : 'tap_to_check_out'.tr,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                   ),
                 ],
-
                 const SizedBox(height: 32),
-
-                // Today's Status Card
                 if (controller.todayAttendance.value != null)
                   _TodayStatusCard(
                     checkInTime: controller.todayAttendance.value!.checkInTimeFormatted,
@@ -89,7 +81,6 @@ class AttendanceView extends GetView<AttendanceController> {
       }),
     );
   }
-
 }
 
 class _CompletedCard extends StatelessWidget {
@@ -117,7 +108,7 @@ class _CompletedCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Completed',
+            'completed'.tr,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.success,
@@ -160,7 +151,7 @@ class _TodayStatusCard extends StatelessWidget {
           children: [
             Expanded(
               child: _StatusItem(
-                label: AppStrings.checkIn,
+                label: 'check_in'.tr,
                 time: checkInTime,
                 icon: Icons.login,
                 isActive: isCheckedIn,
@@ -174,7 +165,7 @@ class _TodayStatusCard extends StatelessWidget {
             ),
             Expanded(
               child: _StatusItem(
-                label: AppStrings.checkOut,
+                label: 'check_out'.tr,
                 time: checkOutTime,
                 icon: Icons.logout,
                 isActive: isCheckedOut,

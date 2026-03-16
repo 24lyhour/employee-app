@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/toast_helper.dart';
 import '../../home/views/home_view.dart';
 import '../../attendance/views/attendance_view.dart';
@@ -40,30 +39,29 @@ class MainView extends GetView<MainController> {
                   _NavItem(
                     icon: Icons.home_outlined,
                     selectedIcon: Icons.home,
-                    label: AppStrings.home,
+                    label: 'home'.tr,
                     isSelected: controller.currentIndex.value == 0,
                     onTap: () => controller.changePage(0),
                   ),
                   _NavItem(
                     icon: Icons.fingerprint_outlined,
                     selectedIcon: Icons.fingerprint,
-                    label: AppStrings.attendance,
+                    label: 'attendance'.tr,
                     isSelected: controller.currentIndex.value == 1,
                     onTap: () => controller.changePage(1),
                   ),
-                  // Center scan button
                   _ScanButton(onTap: () => _openScanner(context)),
                   _NavItem(
                     icon: Icons.history_outlined,
                     selectedIcon: Icons.history,
-                    label: AppStrings.history,
+                    label: 'history'.tr,
                     isSelected: controller.currentIndex.value == 2,
                     onTap: () => controller.changePage(2),
                   ),
                   _NavItem(
                     icon: Icons.person_outlined,
                     selectedIcon: Icons.person,
-                    label: AppStrings.profile,
+                    label: 'profile'.tr,
                     isSelected: controller.currentIndex.value == 3,
                     onTap: () => controller.changePage(3),
                   ),
@@ -84,7 +82,7 @@ class MainView extends GetView<MainController> {
       } else if (attendanceController.canCheckOut) {
         attendanceController.checkOutWithQR(result);
       } else {
-        ToastHelper.showInfo('You have already completed attendance for today');
+        ToastHelper.showInfo('already_completed_attendance'.tr);
       }
     }
   }
@@ -107,8 +105,8 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = const Color(0xFF5EA500);
-    final unselectedColor = const Color(0xFF6B7280);
+    const primaryColor = Color(0xFF5EA500);
+    const unselectedColor = Color(0xFF6B7280);
 
     return Material(
       color: Colors.transparent,

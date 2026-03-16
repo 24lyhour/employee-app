@@ -9,9 +9,13 @@ class StaffRequestPermissionController extends GetxController {
 
   // Form state
   final selectedRole = Rxn<RoleOption>();
+  final selectedDepartment = Rxn<DepartmentOption>();
   final fromDate = Rxn<DateTime>();
   final toDate = Rxn<DateTime>();
   final isLoading = false.obs;
+
+  // Department options
+  final departments = <DepartmentOption>[].obs;
 
   // Request history
   final requestHistory = <PermissionRequestModel>[].obs;
@@ -22,7 +26,16 @@ class StaffRequestPermissionController extends GetxController {
     // Set default dates to today
     fromDate.value = DateTime.now();
     toDate.value = DateTime.now();
+    loadDepartments();
     loadRequestHistory();
+  }
+
+  void loadDepartments() {
+    departments.value = DepartmentOption.availableDepartments;
+  }
+
+  void selectDepartment(DepartmentOption? department) {
+    selectedDepartment.value = department;
   }
 
   @override
@@ -149,6 +162,7 @@ class StaffRequestPermissionController extends GetxController {
 
   void resetForm() {
     selectedRole.value = null;
+    selectedDepartment.value = null;
     fromDate.value = DateTime.now();
     toDate.value = DateTime.now();
     reasonController.clear();

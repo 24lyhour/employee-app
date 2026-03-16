@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../core/constants/app_constants.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../controllers/auth_controller.dart';
@@ -21,16 +20,14 @@ class LoginView extends GetView<AuthController> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 60),
-                // Logo
                 Icon(
                   Icons.access_time_filled,
                   size: 80,
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(height: 24),
-                // Title
                 Text(
-                  'Welcome Back',
+                  'welcome_back'.tr,
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -38,28 +35,26 @@ class LoginView extends GetView<AuthController> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Sign in to continue',
+                  'sign_in_continue'.tr,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 48),
-                // Email field
                 CustomTextField(
                   controller: controller.emailController,
-                  labelText: AppStrings.email,
-                  hintText: 'Enter your email',
+                  labelText: 'email'.tr,
+                  hintText: 'enter_email'.tr,
                   prefixIcon: Icons.email_outlined,
                   keyboardType: TextInputType.emailAddress,
                   validator: controller.validateEmail,
                 ),
                 const SizedBox(height: 16),
-                // Password field
                 Obx(() => CustomTextField(
                       controller: controller.passwordController,
-                      labelText: AppStrings.password,
-                      hintText: 'Enter your password',
+                      labelText: 'password'.tr,
+                      hintText: 'enter_password'.tr,
                       prefixIcon: Icons.lock_outlined,
                       obscureText: !controller.isPasswordVisible.value,
                       validator: controller.validatePassword,
@@ -73,11 +68,9 @@ class LoginView extends GetView<AuthController> {
                       ),
                     )),
                 const SizedBox(height: 8),
-                // Remember me & Forgot password row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Remember me
                     Obx(() => GestureDetector(
                           onTap: controller.toggleRememberMe,
                           child: Row(
@@ -101,7 +94,7 @@ class LoginView extends GetView<AuthController> {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Remember me',
+                                'remember_me'.tr,
                                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                       color: const Color(0xFF6B7280),
                                     ),
@@ -109,39 +102,34 @@ class LoginView extends GetView<AuthController> {
                             ],
                           ),
                         )),
-                    // Forgot password
                     TextButton(
-                      onPressed: () {
-                        // TODO: Implement forgot password
-                      },
+                      onPressed: () {},
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.zero,
                         minimumSize: Size.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      child: const Text(AppStrings.forgotPassword),
+                      child: Text('forgot_password'.tr),
                     ),
                   ],
                 ),
                 const SizedBox(height: 24),
-                // Login button
                 Obx(() => CustomButton(
-                      text: AppStrings.login,
+                      text: 'login'.tr,
                       onPressed: controller.login,
                       isLoading: controller.isLoading.value,
                     )),
                 const SizedBox(height: 24),
-                // Register link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      AppStrings.dontHaveAccount,
+                      'dont_have_account'.tr,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     TextButton(
                       onPressed: controller.goToRegister,
-                      child: const Text(AppStrings.register),
+                      child: Text('register'.tr),
                     ),
                   ],
                 ),

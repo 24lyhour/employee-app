@@ -144,3 +144,26 @@ class RoleOption {
     ),
   ];
 }
+
+class DepartmentOption {
+  final String id;
+  final String name;
+
+  const DepartmentOption({
+    required this.id,
+    required this.name,
+  });
+
+  static const List<DepartmentOption> availableDepartments = [
+    DepartmentOption(id: 'hr', name: 'Human Resources'),
+    DepartmentOption(id: 'it', name: 'IT Department'),
+    DepartmentOption(id: 'finance', name: 'Finance'),
+    DepartmentOption(id: 'marketing', name: 'Marketing'),
+    DepartmentOption(id: 'sales', name: 'Sales'),
+    DepartmentOption(id: 'operations', name: 'Operations'),
+    DepartmentOption(id: 'engineering', name: 'Engineering'),
+    DepartmentOption(id: 'design', name: 'Design'),
+    DepartmentOption(id: 'support', name: 'Customer Support'),
+    DepartmentOption(id: 'admin', name: 'Administration'),
+  ];
+}

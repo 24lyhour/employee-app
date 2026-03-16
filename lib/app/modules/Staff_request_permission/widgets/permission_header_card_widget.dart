@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class PermissionHeaderCard extends StatelessWidget {
   const PermissionHeaderCard({super.key});
@@ -44,22 +45,22 @@ class PermissionHeaderCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'New Request',
-                  style: TextStyle(
+                  'new_request'.tr,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
-                  'Submit your permission request',
-                  style: TextStyle(
+                  'submit_your_permission_request'.tr,
+                  style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 12,
                   ),

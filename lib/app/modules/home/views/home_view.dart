@@ -15,11 +15,11 @@ class HomeView extends GetView<HomeController> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text('Dashboard'),
+        title: Text('home'.tr),
         actions: [
           IconButton(
             icon: const Icon(Icons.assignment_outlined),
-            tooltip: 'Request Permission',
+            tooltip: 'request_permission'.tr,
             onPressed: () => Get.toNamed(Routes.STAFF_REQUEST_PERMISSION),
           ),
           IconButton(
@@ -41,7 +41,6 @@ class HomeView extends GetView<HomeController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Greeting
                 Text(
                   controller.greeting,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -56,16 +55,12 @@ class HomeView extends GetView<HomeController> {
                       ),
                 ),
                 const SizedBox(height: 24),
-
-                // Today's Attendance Status
                 AttendanceStatusCard(
                   attendance: controller.todayAttendance.value,
                 ),
                 const SizedBox(height: 16),
-
-                // Quick Stats
                 Text(
-                  'This Month',
+                  'this_month'.tr,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),

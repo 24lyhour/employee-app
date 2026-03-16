@@ -19,7 +19,7 @@ class DashboardView extends GetView<DashboardController> {
       backgroundColor: const Color(0xFFF9FAFB),
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text('My Dashboard'),
+        title: Text('my_dashboard'.tr),
         centerTitle: true,
         elevation: 0,
         actions: [
@@ -90,11 +90,11 @@ class DashboardView extends GetView<DashboardController> {
       final now = DateTime.now();
       String greeting;
       if (now.hour < 12) {
-        greeting = 'Good Morning';
+        greeting = 'good_morning'.tr;
       } else if (now.hour < 17) {
-        greeting = 'Good Afternoon';
+        greeting = 'good_afternoon'.tr;
       } else {
-        greeting = 'Good Evening';
+        greeting = 'good_evening'.tr;
       }
 
       return Container(
@@ -192,9 +192,9 @@ class DashboardView extends GetView<DashboardController> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Today\'s Attendance',
-                  style: TextStyle(
+                Text(
+                  'todays_attendance'.tr,
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -210,8 +210,8 @@ class DashboardView extends GetView<DashboardController> {
                   ),
                   child: Text(
                     isCheckedIn
-                        ? (isCheckedOut ? 'Completed' : 'Working')
-                        : 'Not Checked In',
+                        ? (isCheckedOut ? 'completed'.tr : 'working'.tr)
+                        : 'not_checked_in'.tr,
                     style: TextStyle(
                       color: isCheckedIn ? _presentColor : _absentColor,
                       fontSize: 12,
@@ -227,7 +227,7 @@ class DashboardView extends GetView<DashboardController> {
                 Expanded(
                   child: _TimeCard(
                     icon: Icons.login,
-                    label: 'Check In',
+                    label: 'check_in'.tr,
                     time: controller.todayCheckInTime,
                     color: _presentColor,
                     isActive: isCheckedIn,
@@ -237,7 +237,7 @@ class DashboardView extends GetView<DashboardController> {
                 Expanded(
                   child: _TimeCard(
                     icon: Icons.logout,
-                    label: 'Check Out',
+                    label: 'check_out'.tr,
                     time: controller.todayCheckOutTime,
                     color: _lateColor,
                     isActive: isCheckedOut,
@@ -259,7 +259,7 @@ class DashboardView extends GetView<DashboardController> {
                     const Icon(Icons.timer, color: _primaryColor, size: 20),
                     const SizedBox(width: 8),
                     Text(
-                      'Work Duration: ${attendance.workDurationFormatted}',
+                      '${'work_duration'.tr}: ${attendance.workDurationFormatted}',
                       style: const TextStyle(
                         color: _primaryColor,
                         fontWeight: FontWeight.w600,
@@ -281,10 +281,24 @@ class DashboardView extends GetView<DashboardController> {
       child: Obx(() => Row(
             children: controller.filterOptions.map((filter) {
               final isSelected = controller.selectedFilter.value == filter;
+              String translatedFilter;
+              switch (filter) {
+                case 'This Week':
+                  translatedFilter = 'this_week'.tr;
+                  break;
+                case 'This Month':
+                  translatedFilter = 'this_month'.tr;
+                  break;
+                case 'Last Month':
+                  translatedFilter = 'last_month'.tr;
+                  break;
+                default:
+                  translatedFilter = filter;
+              }
               return Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: FilterChip(
-                  label: Text(filter),
+                  label: Text(translatedFilter),
                   selected: isSelected,
                   onSelected: (_) => controller.setFilter(filter),
                   selectedColor: _primaryColor.withValues(alpha: 0.2),
@@ -307,7 +321,7 @@ class DashboardView extends GetView<DashboardController> {
               children: [
                 Expanded(
                   child: _StatCard(
-                    title: 'Total Days',
+                    title: 'total_days'.tr,
                     value: '${controller.totalWorkDays.value}',
                     icon: Icons.calendar_today,
                     color: _primaryColor,
@@ -316,7 +330,7 @@ class DashboardView extends GetView<DashboardController> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _StatCard(
-                    title: 'Present',
+                    title: 'present'.tr,
                     value: '${controller.presentDays.value}',
                     icon: Icons.check_circle,
                     color: _presentColor,
@@ -329,7 +343,7 @@ class DashboardView extends GetView<DashboardController> {
               children: [
                 Expanded(
                   child: _StatCard(
-                    title: 'Late',
+                    title: 'late'.tr,
                     value: '${controller.lateDays.value}',
                     icon: Icons.schedule,
                     color: _lateColor,
@@ -338,7 +352,7 @@ class DashboardView extends GetView<DashboardController> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _StatCard(
-                    title: 'Absent',
+                    title: 'absent'.tr,
                     value: '${controller.absentDays.value}',
                     icon: Icons.cancel,
                     color: _absentColor,
@@ -351,7 +365,7 @@ class DashboardView extends GetView<DashboardController> {
               children: [
                 Expanded(
                   child: _StatCard(
-                    title: 'Leave',
+                    title: 'leave'.tr,
                     value: '${controller.leaveDays.value}',
                     icon: Icons.event_busy,
                     color: _leaveColor,
@@ -360,7 +374,7 @@ class DashboardView extends GetView<DashboardController> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _StatCard(
-                    title: 'Attendance',
+                    title: 'attendance'.tr,
                     value: '${controller.attendancePercentage.value.toStringAsFixed(1)}%',
                     icon: Icons.percent,
                     color: controller.attendancePercentage.value >= 90
@@ -393,9 +407,9 @@ class DashboardView extends GetView<DashboardController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Attendance Overview',
-            style: TextStyle(
+          Text(
+            'attendance_overview'.tr,
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -410,10 +424,10 @@ class DashboardView extends GetView<DashboardController> {
               final leave = controller.leaveDays.value.toDouble();
 
               if (present + late + absent + leave == 0) {
-                return const Center(
+                return Center(
                   child: Text(
-                    'No attendance data',
-                    style: TextStyle(color: Colors.grey),
+                    'no_attendance_data'.tr,
+                    style: const TextStyle(color: Colors.grey),
                   ),
                 );
               }
@@ -472,25 +486,25 @@ class DashboardView extends GetView<DashboardController> {
                       children: [
                         _LegendItem(
                           color: _presentColor,
-                          label: 'Present',
+                          label: 'present'.tr,
                           value: controller.presentDays.value,
                         ),
                         const SizedBox(height: 8),
                         _LegendItem(
                           color: _lateColor,
-                          label: 'Late',
+                          label: 'late'.tr,
                           value: controller.lateDays.value,
                         ),
                         const SizedBox(height: 8),
                         _LegendItem(
                           color: _absentColor,
-                          label: 'Absent',
+                          label: 'absent'.tr,
                           value: controller.absentDays.value,
                         ),
                         const SizedBox(height: 8),
                         _LegendItem(
                           color: _leaveColor,
-                          label: 'Leave',
+                          label: 'leave'.tr,
                           value: controller.leaveDays.value,
                         ),
                       ],
@@ -522,9 +536,9 @@ class DashboardView extends GetView<DashboardController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Work Hours Summary',
-            style: TextStyle(
+          Text(
+            'work_hours_summary'.tr,
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -535,7 +549,7 @@ class DashboardView extends GetView<DashboardController> {
                   Expanded(
                     child: _WorkHoursCard(
                       icon: Icons.access_time_filled,
-                      label: 'Total Hours',
+                      label: 'total_hours'.tr,
                       value: controller.formattedTotalHours,
                       color: _primaryColor,
                     ),
@@ -544,7 +558,7 @@ class DashboardView extends GetView<DashboardController> {
                   Expanded(
                     child: _WorkHoursCard(
                       icon: Icons.trending_up,
-                      label: 'Daily Average',
+                      label: 'daily_average'.tr,
                       value: controller.formattedAverageHours,
                       color: _presentColor,
                     ),
@@ -573,9 +587,9 @@ class DashboardView extends GetView<DashboardController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'This Week',
-            style: TextStyle(
+          Text(
+            'this_week'.tr,
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -598,13 +612,11 @@ class DashboardView extends GetView<DashboardController> {
             spacing: 16,
             runSpacing: 8,
             children: [
-              _SmallLegendItem(
-                  color: _presentColor, label: 'Present'),
-              _SmallLegendItem(color: _lateColor, label: 'Late'),
-              _SmallLegendItem(color: _absentColor, label: 'Absent'),
-              _SmallLegendItem(color: _leaveColor, label: 'Leave'),
-              _SmallLegendItem(
-                  color: const Color(0xFF9CA3AF), label: 'Weekend'),
+              _SmallLegendItem(color: _presentColor, label: 'present'.tr),
+              _SmallLegendItem(color: _lateColor, label: 'late'.tr),
+              _SmallLegendItem(color: _absentColor, label: 'absent'.tr),
+              _SmallLegendItem(color: _leaveColor, label: 'leave'.tr),
+              _SmallLegendItem(color: const Color(0xFF9CA3AF), label: 'weekend'.tr),
             ],
           ),
         ],
@@ -629,9 +641,9 @@ class DashboardView extends GetView<DashboardController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Recent Attendance',
-            style: TextStyle(
+          Text(
+            'recent_attendance'.tr,
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -640,12 +652,12 @@ class DashboardView extends GetView<DashboardController> {
           Obx(() {
             final history = controller.attendanceHistory.take(7).toList();
             if (history.isEmpty) {
-              return const Padding(
-                padding: EdgeInsets.all(20),
+              return Padding(
+                padding: const EdgeInsets.all(20),
                 child: Center(
                   child: Text(
-                    'No attendance history',
-                    style: TextStyle(color: Colors.grey),
+                    'no_attendance_history'.tr,
+                    style: const TextStyle(color: Colors.grey),
                   ),
                 ),
               );
@@ -971,33 +983,33 @@ class _AttendanceHistoryTile extends StatelessWidget {
     final dateFormat = DateFormat('EEE, MMM d');
     Color statusColor;
     IconData statusIcon;
-    String statusText;
+    String statusKey;
 
     switch (attendance.status.toString().split('.').last) {
       case 'present':
         statusColor = const Color(0xFF22C55E);
         statusIcon = Icons.check_circle;
-        statusText = 'Present';
+        statusKey = 'present';
         break;
       case 'late':
         statusColor = const Color(0xFFF59E0B);
         statusIcon = Icons.schedule;
-        statusText = 'Late';
+        statusKey = 'late';
         break;
       case 'absent':
         statusColor = const Color(0xFFEF4444);
         statusIcon = Icons.cancel;
-        statusText = 'Absent';
+        statusKey = 'absent';
         break;
       case 'leave':
         statusColor = const Color(0xFF8B5CF6);
         statusIcon = Icons.event_busy;
-        statusText = 'Leave';
+        statusKey = 'leave';
         break;
       default:
         statusColor = Colors.grey;
         statusIcon = Icons.help;
-        statusText = 'Unknown';
+        statusKey = 'absent';
     }
 
     return Padding(
@@ -1057,7 +1069,7 @@ class _AttendanceHistoryTile extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
-              statusText,
+              statusKey.tr,
               style: TextStyle(
                 color: statusColor,
                 fontSize: 11,

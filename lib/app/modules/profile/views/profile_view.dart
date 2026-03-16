@@ -14,7 +14,7 @@ class ProfileView extends GetView<ProfileController> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text('Profile'),
+        title: Text('profile'.tr),
       ),
       body: Obx(() {
         final user = controller.user.value;
@@ -57,19 +57,19 @@ class ProfileView extends GetView<ProfileController> {
               // Info Cards
               _InfoCard(
                 icon: Icons.badge_outlined,
-                label: 'Employee ID',
+                label: 'employee_id'.tr,
                 value: user.employeeId,
               ),
               const SizedBox(height: 12),
               _InfoCard(
                 icon: Icons.email_outlined,
-                label: 'Email',
+                label: 'email'.tr,
                 value: user.email,
               ),
               const SizedBox(height: 12),
               _InfoCard(
                 icon: Icons.business_outlined,
-                label: 'Department',
+                label: 'department'.tr,
                 value: user.department,
               ),
               const SizedBox(height: 32),
@@ -77,12 +77,12 @@ class ProfileView extends GetView<ProfileController> {
               // Menu Items - Primary Actions
               _MenuItem(
                 icon: Icons.dashboard_outlined,
-                label: 'My Dashboard',
+                label: 'my_dashboard'.tr,
                 onTap: () => Get.toNamed(Routes.DASHBOARD),
               ),
               _MenuItem(
                 icon: Icons.assignment_outlined,
-                label: 'Request Permission',
+                label: 'request_permission'.tr,
                 onTap: () => Get.toNamed(Routes.STAFF_REQUEST_PERMISSION),
               ),
               const SizedBox(height: 8),
@@ -90,19 +90,19 @@ class ProfileView extends GetView<ProfileController> {
               // Account Settings
               _MenuItem(
                 icon: Icons.edit_outlined,
-                label: AppStrings.editProfile,
+                label: 'edit_profile'.tr,
                 onTap: () {
                   // TODO: Navigate to edit profile
                 },
               ),
               _MenuItem(
                 icon: Icons.settings_outlined,
-                label: 'Settings',
+                label: 'settings'.tr,
                 onTap: () => Get.toNamed(Routes.SETTING),
               ),
               _MenuItem(
                 icon: Icons.notifications_outlined,
-                label: 'Notifications',
+                label: 'notifications'.tr,
                 onTap: () {
                   // TODO: Navigate to notifications settings
                 },
@@ -112,14 +112,14 @@ class ProfileView extends GetView<ProfileController> {
               // Support
               _MenuItem(
                 icon: Icons.help_outline,
-                label: 'Help & Support',
+                label: 'help_support'.tr,
                 onTap: () {
                   // TODO: Navigate to help
                 },
               ),
               _MenuItem(
                 icon: Icons.info_outline,
-                label: 'About',
+                label: 'about'.tr,
                 onTap: () {
                   // TODO: Show about dialog
                 },
@@ -128,7 +128,7 @@ class ProfileView extends GetView<ProfileController> {
               // Logout
               _MenuItem(
                 icon: Icons.logout,
-                label: AppStrings.logout,
+                label: 'logout'.tr,
                 iconColor: AppColors.error,
                 textColor: AppColors.error,
                 onTap: () => _showLogoutDialog(context),
@@ -144,12 +144,12 @@ class ProfileView extends GetView<ProfileController> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
+        title: Text('logout'.tr),
+        content: Text('logout_confirm'.tr),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text('cancel'.tr),
           ),
           TextButton(
             onPressed: () {
@@ -157,7 +157,7 @@ class ProfileView extends GetView<ProfileController> {
               controller.logout();
             },
             child: Text(
-              'Logout',
+              'logout'.tr,
               style: TextStyle(color: AppColors.error),
             ),
           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../data/models/permission_request_model.dart';
 
 class StatusBadge extends StatelessWidget {
@@ -43,21 +44,21 @@ class StatusBadge extends StatelessWidget {
         return _StatusConfig(
           bgColor: const Color(0xFF5EA500).withValues(alpha: 0.1),
           textColor: const Color(0xFF5EA500),
-          text: 'Approved',
+          text: 'approved'.tr,
           icon: Icons.check_circle_outline,
         );
       case PermissionStatus.rejected:
         return _StatusConfig(
           bgColor: Colors.red.shade50,
           textColor: Colors.red.shade700,
-          text: 'Rejected',
+          text: 'rejected'.tr,
           icon: Icons.cancel_outlined,
         );
       case PermissionStatus.pending:
         return _StatusConfig(
           bgColor: Colors.orange.shade50,
           textColor: Colors.orange.shade700,
-          text: 'Pending',
+          text: 'pending'.tr,
           icon: Icons.access_time,
         );
     }

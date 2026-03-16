@@ -13,11 +13,10 @@ class HistoryView extends GetView<HistoryController> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: const Text('History'),
+        title: Text('history'.tr),
       ),
       body: Column(
         children: [
-          // Month Selector
           Obx(() => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
@@ -41,7 +40,6 @@ class HistoryView extends GetView<HistoryController> {
                 ),
               )),
           const Divider(height: 1),
-          // History List
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {
@@ -60,7 +58,7 @@ class HistoryView extends GetView<HistoryController> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'No attendance records',
+                        'no_attendance_records'.tr,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                               color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),

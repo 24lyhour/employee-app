@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../data/models/permission_request_model.dart';
 import 'status_badge_widget.dart';
@@ -70,7 +71,7 @@ class PermissionHistoryCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 1),
                         Text(
-                          'Requested on ${DateFormat('dd MMM yyyy').format(request.requestDate)}',
+                          '${'requested_on'.tr} ${DateFormat('dd MMM yyyy').format(request.requestDate)}',
                           style: TextStyle(
                             fontSize: 10,
                             color: Colors.grey.shade500,
@@ -115,7 +116,7 @@ class PermissionHistoryCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          '${request.totalDays} day${request.totalDays > 1 ? 's' : ''}',
+                          '${request.totalDays} ${request.totalDays > 1 ? 'days'.tr : 'day'.tr}',
                           style: TextStyle(
                             fontSize: 10,
                             color: Colors.grey.shade600,
@@ -210,7 +211,7 @@ class PermissionHistoryCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'Requested on ${DateFormat('dd MMM yyyy, HH:mm').format(request.requestDate)}',
+                        '${'requested_on'.tr} ${DateFormat('dd MMM yyyy, HH:mm').format(request.requestDate)}',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey.shade500,
@@ -227,7 +228,7 @@ class PermissionHistoryCard extends StatelessWidget {
             // Date Range
             _buildDetailItem(
               icon: Icons.date_range,
-              label: 'Date Range',
+              label: 'date_range'.tr,
               value: '${DateFormat('dd MMM yyyy').format(request.fromDate)} - ${DateFormat('dd MMM yyyy').format(request.toDate)}',
             ),
             const SizedBox(height: 12),
@@ -235,15 +236,15 @@ class PermissionHistoryCard extends StatelessWidget {
             // Duration
             _buildDetailItem(
               icon: Icons.timelapse,
-              label: 'Duration',
-              value: '${request.totalDays} day${request.totalDays > 1 ? 's' : ''}',
+              label: 'duration'.tr,
+              value: '${request.totalDays} ${request.totalDays > 1 ? 'days'.tr : 'day'.tr}',
             ),
             const SizedBox(height: 12),
 
             // Reason
             _buildDetailItem(
               icon: Icons.notes,
-              label: 'Reason',
+              label: 'reason'.tr,
               value: request.reason,
               isMultiLine: true,
             ),
@@ -252,7 +253,7 @@ class PermissionHistoryCard extends StatelessWidget {
               const SizedBox(height: 12),
               _buildDetailItem(
                 icon: Icons.comment,
-                label: 'Review Note',
+                label: 'review_note'.tr,
                 value: request.reviewNote!,
                 isMultiLine: true,
               ),
@@ -273,7 +274,7 @@ class PermissionHistoryCard extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  'Close',
+                  'close'.tr,
                   style: TextStyle(
                     color: Colors.grey.shade700,
                     fontWeight: FontWeight.w600,
