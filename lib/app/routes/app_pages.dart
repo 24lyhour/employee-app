@@ -1,10 +1,10 @@
 import 'package:get/get.dart';
 
-import '../modules/staff_request_permission/bindings/staff_request_permission_binding.dart';
-import '../modules/staff_request_permission/views/staff_request_permission_view.dart';
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/login_view.dart';
 import '../modules/auth/views/register_view.dart';
+import '../modules/dashboard/bindings/dashboard_binding.dart';
+import '../modules/dashboard/views/dashboard_view.dart';
 import '../modules/main/bindings/main_binding.dart';
 import '../modules/main/views/main_view.dart';
 import '../modules/scanner/bindings/scanner_binding.dart';
@@ -13,6 +13,8 @@ import '../modules/setting/bindings/setting_binding.dart';
 import '../modules/setting/views/setting_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
+import '../modules/staff_request_permission/bindings/staff_request_permission_binding.dart';
+import '../modules/staff_request_permission/views/staff_request_permission_view.dart';
 
 part 'app_routes.dart';
 
@@ -56,6 +58,11 @@ class AppPages {
       name: _Paths.SETTING,
       page: () => const SettingView(),
       binding: SettingBinding(),
+    ),
+    GetPage(
+      name: _Paths.DASHBOARD,
+      page: () => const DashboardView(),
+      binding: DashboardBinding(),
     ),
   ];
 }

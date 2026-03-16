@@ -74,7 +74,20 @@ class ProfileView extends GetView<ProfileController> {
               ),
               const SizedBox(height: 32),
 
-              // Menu Items
+              // Menu Items - Primary Actions
+              _MenuItem(
+                icon: Icons.dashboard_outlined,
+                label: 'My Dashboard',
+                onTap: () => Get.toNamed(Routes.DASHBOARD),
+              ),
+              _MenuItem(
+                icon: Icons.assignment_outlined,
+                label: 'Request Permission',
+                onTap: () => Get.toNamed(Routes.STAFF_REQUEST_PERMISSION),
+              ),
+              const SizedBox(height: 8),
+
+              // Account Settings
               _MenuItem(
                 icon: Icons.edit_outlined,
                 label: AppStrings.editProfile,
@@ -83,12 +96,20 @@ class ProfileView extends GetView<ProfileController> {
                 },
               ),
               _MenuItem(
+                icon: Icons.settings_outlined,
+                label: 'Settings',
+                onTap: () => Get.toNamed(Routes.SETTING),
+              ),
+              _MenuItem(
                 icon: Icons.notifications_outlined,
                 label: 'Notifications',
                 onTap: () {
                   // TODO: Navigate to notifications settings
                 },
               ),
+              const SizedBox(height: 8),
+
+              // Support
               _MenuItem(
                 icon: Icons.help_outline,
                 label: 'Help & Support',
@@ -102,16 +123,6 @@ class ProfileView extends GetView<ProfileController> {
                 onTap: () {
                   // TODO: Show about dialog
                 },
-              ),
-              _MenuItem(
-                icon: Icons.assignment_outlined,
-                label: 'Request Permission',
-                onTap: () => Get.toNamed(Routes.STAFF_REQUEST_PERMISSION),
-              ),
-              _MenuItem(
-                icon: Icons.settings_outlined,
-                label: 'Settings',
-                onTap: () => Get.toNamed(Routes.SETTING),
               ),
               const SizedBox(height: 16),
               // Logout
