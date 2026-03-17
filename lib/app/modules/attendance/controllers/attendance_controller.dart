@@ -5,10 +5,10 @@ import '../../../data/models/attendance_model.dart';
 import '../../../data/providers/attendance_provider.dart';
 
 class AttendanceController extends GetxController {
-  final AttendanceProvider provider;
+  final LegacyAttendanceProvider provider;
   AttendanceController({required this.provider});
 
-  final todayAttendance = Rxn<AttendanceModel>();
+  final todayAttendance = Rxn<LegacyAttendanceModel>();
   final currentTime = DateTime.now().obs;
   final isLoading = false.obs;
 

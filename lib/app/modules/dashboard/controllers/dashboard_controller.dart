@@ -12,7 +12,7 @@ class DashboardController extends GetxController {
   final user = Rxn<UserModel>();
 
   // Today's attendance
-  final todayAttendance = Rxn<AttendanceModel>();
+  final todayAttendance = Rxn<LegacyAttendanceModel>();
 
   // Monthly stats
   final totalWorkDays = 0.obs;
@@ -32,7 +32,7 @@ class DashboardController extends GetxController {
   final weeklyStatus = <WeekDayStatus>[].obs;
 
   // Attendance history
-  final attendanceHistory = <AttendanceModel>[].obs;
+  final attendanceHistory = <LegacyAttendanceModel>[].obs;
 
   // Selected time filter
   final selectedFilter = 'This Month'.obs;
@@ -56,7 +56,7 @@ class DashboardController extends GetxController {
 
       // Load today's attendance
       final now = DateTime.now();
-      todayAttendance.value = AttendanceModel(
+      todayAttendance.value = LegacyAttendanceModel(
         id: '1',
         userId: user.value!.id,
         date: DateTime(now.year, now.month, now.day),
@@ -80,9 +80,9 @@ class DashboardController extends GetxController {
     }
   }
 
-  List<AttendanceModel> _generateMockHistory() {
+  List<LegacyAttendanceModel> _generateMockHistory() {
     final now = DateTime.now();
-    final history = <AttendanceModel>[];
+    final history = <LegacyAttendanceModel>[];
 
     for (int i = 0; i < 30; i++) {
       final date = now.subtract(Duration(days: i));
@@ -120,7 +120,7 @@ class DashboardController extends GetxController {
         checkOut = DateTime(date.year, date.month, date.day, 17, 30 + (i % 30));
       }
 
-      history.add(AttendanceModel(
+      history.add(LegacyAttendanceModel(
         id: '${i + 1}',
         userId: '1',
         date: date,

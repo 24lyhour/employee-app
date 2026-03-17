@@ -3,10 +3,10 @@ import '../../../data/models/attendance_model.dart';
 import '../../../data/providers/attendance_provider.dart';
 
 class HistoryController extends GetxController {
-  final AttendanceProvider provider;
+  final LegacyAttendanceProvider provider;
   HistoryController({required this.provider});
 
-  final attendanceList = <AttendanceModel>[].obs;
+  final attendanceList = <LegacyAttendanceModel>[].obs;
   final isLoading = false.obs;
   final selectedMonth = DateTime.now().obs;
 

@@ -3,7 +3,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../data/models/attendance_model.dart';
 
 class AttendanceStatusCard extends StatelessWidget {
-  final AttendanceModel? attendance;
+  final LegacyAttendanceModel? attendance;
 
   const AttendanceStatusCard({
     super.key,

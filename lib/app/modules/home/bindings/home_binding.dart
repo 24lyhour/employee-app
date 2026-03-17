@@ -5,9 +5,9 @@ import '../controllers/home_controller.dart';
 class HomeBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<AttendanceProvider>(() => AttendanceProvider());
+    Get.lazyPut<LegacyAttendanceProvider>(() => LegacyAttendanceProvider());
     Get.lazyPut<HomeController>(
-      () => HomeController(provider: Get.find<AttendanceProvider>()),
+      () => HomeController(provider: Get.find<LegacyAttendanceProvider>()),
     );
   }
 }

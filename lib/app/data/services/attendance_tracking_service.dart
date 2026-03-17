@@ -1,9 +1,52 @@
 import 'package:get/get.dart';
-import '../models/attendance_model.dart';
+
+/// Local attendance status enum for tracking service
+enum TrackingAttendanceStatus { present, late, absent, leave }
+
+/// Local attendance record for tracking service (mock data)
+class TrackingAttendanceRecord {
+  final String id;
+  final String userId;
+  final DateTime date;
+  final DateTime? checkInTime;
+  final DateTime? checkOutTime;
+  final TrackingAttendanceStatus status;
+  final String? note;
+
+  TrackingAttendanceRecord({
+    required this.id,
+    required this.userId,
+    required this.date,
+    this.checkInTime,
+    this.checkOutTime,
+    required this.status,
+    this.note,
+  });
+
+  TrackingAttendanceRecord copyWith({
+    String? id,
+    String? userId,
+    DateTime? date,
+    DateTime? checkInTime,
+    DateTime? checkOutTime,
+    TrackingAttendanceStatus? status,
+    String? note,
+  }) {
+    return TrackingAttendanceRecord(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      date: date ?? this.date,
+      checkInTime: checkInTime ?? this.checkInTime,
+      checkOutTime: checkOutTime ?? this.checkOutTime,
+      status: status ?? this.status,
+      note: note ?? this.note,
+    );
+  }
+}
 
 class AttendanceTrackingService extends GetxService {
   // All employees attendance records
-  final allAttendance = <AttendanceModel>[].obs;
+  final allAttendance = <TrackingAttendanceRecord>[].obs;
 
   // Employee list (mock for now)
   final employees = <EmployeeData>[].obs;
@@ -34,76 +77,76 @@ class AttendanceTrackingService extends GetxService {
 
     allAttendance.value = [
       // Present employees
-      AttendanceModel(
+      TrackingAttendanceRecord(
         id: '1',
         userId: '1',
         date: today,
         checkInTime: DateTime(now.year, now.month, now.day, 8, 30),
-        status: AttendanceStatus.present,
+        status: TrackingAttendanceStatus.present,
       ),
-      AttendanceModel(
+      TrackingAttendanceRecord(
         id: '2',
         userId: '2',
         date: today,
         checkInTime: DateTime(now.year, now.month, now.day, 8, 45),
-        status: AttendanceStatus.present,
+        status: TrackingAttendanceStatus.present,
       ),
-      AttendanceModel(
+      TrackingAttendanceRecord(
         id: '3',
         userId: '3',
         date: today,
         checkInTime: DateTime(now.year, now.month, now.day, 8, 50),
-        status: AttendanceStatus.present,
+        status: TrackingAttendanceStatus.present,
       ),
-      AttendanceModel(
+      TrackingAttendanceRecord(
         id: '4',
         userId: '4',
         date: today,
         checkInTime: DateTime(now.year, now.month, now.day, 8, 55),
-        status: AttendanceStatus.present,
+        status: TrackingAttendanceStatus.present,
       ),
       // Late employees
-      AttendanceModel(
+      TrackingAttendanceRecord(
         id: '5',
         userId: '5',
         date: today,
         checkInTime: DateTime(now.year, now.month, now.day, 9, 15),
-        status: AttendanceStatus.late,
+        status: TrackingAttendanceStatus.late,
       ),
-      AttendanceModel(
+      TrackingAttendanceRecord(
         id: '6',
         userId: '6',
         date: today,
         checkInTime: DateTime(now.year, now.month, now.day, 9, 30),
-        status: AttendanceStatus.late,
+        status: TrackingAttendanceStatus.late,
       ),
       // On leave
-      AttendanceModel(
+      TrackingAttendanceRecord(
         id: '7',
         userId: '7',
         date: today,
-        status: AttendanceStatus.leave,
+        status: TrackingAttendanceStatus.leave,
       ),
       // Absent (no record yet)
-      AttendanceModel(
+      TrackingAttendanceRecord(
         id: '8',
         userId: '8',
         date: today,
-        status: AttendanceStatus.absent,
+        status: TrackingAttendanceStatus.absent,
       ),
-      AttendanceModel(
+      TrackingAttendanceRecord(
         id: '9',
         userId: '9',
         date: today,
         checkInTime: DateTime(now.year, now.month, now.day, 8, 40),
-        status: AttendanceStatus.present,
+        status: TrackingAttendanceStatus.present,
       ),
-      AttendanceModel(
+      TrackingAttendanceRecord(
         id: '10',
         userId: '10',
         date: today,
         checkInTime: DateTime(now.year, now.month, now.day, 8, 35),
-        status: AttendanceStatus.present,
+        status: TrackingAttendanceStatus.present,
       ),
     ];
   }
@@ -125,16 +168,16 @@ class AttendanceTrackingService extends GetxService {
 
     for (final record in todayRecords) {
       switch (record.status) {
-        case AttendanceStatus.present:
+        case TrackingAttendanceStatus.present:
           present++;
           break;
-        case AttendanceStatus.late:
+        case TrackingAttendanceStatus.late:
           late++;
           break;
-        case AttendanceStatus.absent:
+        case TrackingAttendanceStatus.absent:
           absent++;
           break;
-        case AttendanceStatus.leave:
+        case TrackingAttendanceStatus.leave:
           onLeave++;
           break;
       }
@@ -167,14 +210,14 @@ class AttendanceTrackingService extends GetxService {
 
       for (final record in dayRecords) {
         switch (record.status) {
-          case AttendanceStatus.present:
+          case TrackingAttendanceStatus.present:
             present++;
             break;
-          case AttendanceStatus.late:
+          case TrackingAttendanceStatus.late:
             late++;
             break;
-          case AttendanceStatus.absent:
-          case AttendanceStatus.leave:
+          case TrackingAttendanceStatus.absent:
+          case TrackingAttendanceStatus.leave:
             absent++;
             break;
         }
@@ -224,8 +267,8 @@ class AttendanceTrackingService extends GetxService {
             a.date.year == today.year &&
             a.date.month == today.month &&
             a.date.day == today.day &&
-            (a.status == AttendanceStatus.present ||
-                a.status == AttendanceStatus.late);
+            (a.status == TrackingAttendanceStatus.present ||
+                a.status == TrackingAttendanceStatus.late);
       }).length;
 
       return DepartmentStats(
@@ -250,11 +293,11 @@ class AttendanceTrackingService extends GetxService {
       if (attendance.checkInTime != null) {
         activities.add(ActivityLog(
           employeeName: employee.name,
-          action: attendance.status == AttendanceStatus.late
+          action: attendance.status == TrackingAttendanceStatus.late
               ? 'Checked in late'
               : 'Checked in',
           time: attendance.checkInTime!,
-          type: attendance.status == AttendanceStatus.late
+          type: attendance.status == TrackingAttendanceStatus.late
               ? ActivityType.late
               : ActivityType.checkIn,
         ));
@@ -269,7 +312,7 @@ class AttendanceTrackingService extends GetxService {
         ));
       }
 
-      if (attendance.status == AttendanceStatus.leave) {
+      if (attendance.status == TrackingAttendanceStatus.leave) {
         activities.add(ActivityLog(
           employeeName: employee.name,
           action: 'On leave',
@@ -299,12 +342,12 @@ class AttendanceTrackingService extends GetxService {
           a.date.day == today.day,
     );
 
-    final newRecord = AttendanceModel(
+    final newRecord = TrackingAttendanceRecord(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       userId: userId,
       date: today,
       checkInTime: now,
-      status: isLate ? AttendanceStatus.late : AttendanceStatus.present,
+      status: isLate ? TrackingAttendanceStatus.late : TrackingAttendanceStatus.present,
     );
 
     if (existing >= 0) {

@@ -1,6 +1,13 @@
+// Re-export from new module location
+export '../../modules/attendance/data/models/attendance_model.dart';
+
+/// Legacy AttendanceStatus enum for backward compatibility
+/// Used by: dashboard_controller, history_controller, home_controller, widgets
 enum AttendanceStatus { present, late, absent, leave }
 
-class AttendanceModel {
+/// Legacy AttendanceModel for backward compatibility with old code
+/// New code should use AttendanceModel from modules/attendance/data/models/
+class LegacyAttendanceModel {
   final String id;
   final String userId;
   final DateTime date;
@@ -9,7 +16,7 @@ class AttendanceModel {
   final AttendanceStatus status;
   final String? note;
 
-  AttendanceModel({
+  LegacyAttendanceModel({
     required this.id,
     required this.userId,
     required this.date,
@@ -19,10 +26,10 @@ class AttendanceModel {
     this.note,
   });
 
-  factory AttendanceModel.fromJson(Map<String, dynamic> json) {
-    return AttendanceModel(
-      id: json['id'] ?? '',
-      userId: json['user_id'] ?? '',
+  factory LegacyAttendanceModel.fromJson(Map<String, dynamic> json) {
+    return LegacyAttendanceModel(
+      id: json['id']?.toString() ?? '',
+      userId: json['user_id']?.toString() ?? '',
       date: json['date'] != null ? DateTime.parse(json['date']) : DateTime.now(),
       checkInTime: json['check_in_time'] != null
           ? DateTime.parse(json['check_in_time'])
@@ -50,7 +57,7 @@ class AttendanceModel {
     };
   }
 
-  AttendanceModel copyWith({
+  LegacyAttendanceModel copyWith({
     String? id,
     String? userId,
     DateTime? date,
@@ -59,7 +66,7 @@ class AttendanceModel {
     AttendanceStatus? status,
     String? note,
   }) {
-    return AttendanceModel(
+    return LegacyAttendanceModel(
       id: id ?? this.id,
       userId: userId ?? this.userId,
       date: date ?? this.date,
@@ -97,13 +104,13 @@ class AttendanceModel {
   }
 
   // Mock data for testing
-  static List<AttendanceModel> mockList() {
+  static List<LegacyAttendanceModel> mockList() {
     final now = DateTime.now();
     return List.generate(10, (index) {
       final date = now.subtract(Duration(days: index));
       final checkIn = DateTime(date.year, date.month, date.day, 8, 30 + index);
       final checkOut = DateTime(date.year, date.month, date.day, 17, 30);
-      return AttendanceModel(
+      return LegacyAttendanceModel(
         id: '${index + 1}',
         userId: '1',
         date: date,

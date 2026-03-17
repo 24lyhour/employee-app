@@ -12,18 +12,18 @@ class MainBinding extends Bindings {
   void dependencies() {
     // Providers - use Get.put to create immediately
     Get.put<AuthProvider>(AuthProvider());
-    Get.put<AttendanceProvider>(AttendanceProvider());
+    Get.put<LegacyAttendanceProvider>(LegacyAttendanceProvider());
 
     // Controllers
     Get.put<MainController>(MainController());
     Get.lazyPut<HomeController>(
-      () => HomeController(provider: Get.find<AttendanceProvider>()),
+      () => HomeController(provider: Get.find<LegacyAttendanceProvider>()),
     );
     Get.lazyPut<AttendanceController>(
-      () => AttendanceController(provider: Get.find<AttendanceProvider>()),
+      () => AttendanceController(provider: Get.find<LegacyAttendanceProvider>()),
     );
     Get.lazyPut<HistoryController>(
-      () => HistoryController(provider: Get.find<AttendanceProvider>()),
+      () => HistoryController(provider: Get.find<LegacyAttendanceProvider>()),
     );
     Get.lazyPut<ProfileController>(
       () => ProfileController(authProvider: Get.find<AuthProvider>()),

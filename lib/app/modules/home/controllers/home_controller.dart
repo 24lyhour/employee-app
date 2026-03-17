@@ -4,11 +4,11 @@ import '../../../data/models/user_model.dart';
 import '../../../data/providers/attendance_provider.dart';
 
 class HomeController extends GetxController {
-  final AttendanceProvider provider;
+  final LegacyAttendanceProvider provider;
   HomeController({required this.provider});
 
   final user = Rxn<UserModel>();
-  final todayAttendance = Rxn<AttendanceModel>();
+  final todayAttendance = Rxn<LegacyAttendanceModel>();
   final stats = <String, int>{}.obs;
   final isLoading = false.obs;
 

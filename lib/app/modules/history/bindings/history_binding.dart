@@ -5,9 +5,9 @@ import '../controllers/history_controller.dart';
 class HistoryBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<AttendanceProvider>(() => AttendanceProvider());
+    Get.lazyPut<LegacyAttendanceProvider>(() => LegacyAttendanceProvider());
     Get.lazyPut<HistoryController>(
-      () => HistoryController(provider: Get.find<AttendanceProvider>()),
+      () => HistoryController(provider: Get.find<LegacyAttendanceProvider>()),
     );
   }
 }
