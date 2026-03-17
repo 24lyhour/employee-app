@@ -11,7 +11,7 @@ class AppFlavorConfig {
       location: BannerLocation.topStart,
       variables: {
         "appName": "Employee App (Dev)",
-        "baseUrl": "https://dev-api.example.com",
+        "baseUrl": "http://universe.test", // Local development
         "environment": Environment.dev,
       },
     );
@@ -24,7 +24,7 @@ class AppFlavorConfig {
       location: BannerLocation.topStart,
       variables: {
         "appName": "Employee App (Staging)",
-        "baseUrl": "https://staging-api.example.com",
+        "baseUrl": "https://staging.uninversal-global.online",
         "environment": Environment.staging,
       },
     );
@@ -37,7 +37,7 @@ class AppFlavorConfig {
       location: BannerLocation.topStart,
       variables: {
         "appName": "Employee App",
-        "baseUrl": "https://api.example.com",
+        "baseUrl": "https://uninversal-global.online",
         "environment": Environment.prod,
       },
     );
@@ -45,7 +45,8 @@ class AppFlavorConfig {
 
   static String get appName => FlavorConfig.instance.variables["appName"];
   static String get baseUrl => FlavorConfig.instance.variables["baseUrl"];
-  static Environment get environment => FlavorConfig.instance.variables["environment"];
+  static Environment get environment =>
+      FlavorConfig.instance.variables["environment"];
   static bool get isDev => environment == Environment.dev;
   static bool get isStaging => environment == Environment.staging;
   static bool get isProd => environment == Environment.prod;
