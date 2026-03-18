@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../data/models/permission_request_model.dart';
@@ -97,18 +98,14 @@ class StaffRequestPermissionController extends GetxController {
     }
   }
 
-  String? validateReason(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Please enter your reason';
-    }
-    if (value.trim().length < 5) {
-      return 'Reason must be at least 5 characters';
-    }
-    if (value.trim().length > 1000) {
-      return 'Reason cannot exceed 1000 characters';
-    }
-    return null;
-  }
+  /// Validator for reason field using FormBuilderValidators
+  String? Function(String?) get validateReason => FormBuilderValidators.compose([
+        FormBuilderValidators.required(errorText: 'Please enter your reason'),
+        FormBuilderValidators.minLength(5,
+            errorText: 'Reason must be at least 5 characters'),
+        FormBuilderValidators.maxLength(1000,
+            errorText: 'Reason cannot exceed 1000 characters'),
+      ]);
 
   bool get isFormValid {
     final reason = reasonText.value.trim();

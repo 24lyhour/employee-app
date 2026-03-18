@@ -151,8 +151,12 @@ class ProfileView extends GetView<ProfileController> {
                 _MenuItem(
                   icon: Icons.edit_outlined,
                   label: 'edit_profile'.tr,
-                  onTap: () {
-                    // TODO: Navigate to edit profile
+                  onTap: () async {
+                    final result = await Get.toNamed(Routes.PROFILE_EDIT);
+                    // Refresh profile if updated
+                    if (result == true) {
+                      controller.loadEmployee();
+                    }
                   },
                 ),
                 _MenuItem(

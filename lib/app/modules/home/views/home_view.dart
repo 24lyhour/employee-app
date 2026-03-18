@@ -4,7 +4,6 @@ import '../../../core/widgets/clock_loading_widget.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/home_controller.dart';
 import '../widgets/attendance_status_card.dart';
-import '../widgets/quick_stats_card.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
@@ -49,7 +48,7 @@ class HomeView extends GetView<HomeController> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  controller.user.value?.name ?? 'Employee',
+                  controller.employeeName,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -57,16 +56,8 @@ class HomeView extends GetView<HomeController> {
                 const SizedBox(height: 24),
                 AttendanceStatusCard(
                   attendance: controller.todayAttendance.value,
+                  stats: controller.stats,
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  'this_month'.tr,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
-                const SizedBox(height: 12),
-                QuickStatsCard(stats: controller.stats),
               ],
             ),
           ),

@@ -7,6 +7,8 @@ import '../modules/dashboard/bindings/dashboard_binding.dart';
 import '../modules/dashboard/views/dashboard_view.dart';
 import '../modules/main/bindings/main_binding.dart';
 import '../modules/main/views/main_view.dart';
+import '../modules/profile/profile_edit/bindings/profile_edit_binding.dart';
+import '../modules/profile/profile_edit/views/profile_edit_view.dart';
 import '../modules/scanner/bindings/scanner_binding.dart';
 import '../modules/scanner/views/scanner_view.dart';
 import '../modules/setting/bindings/setting_binding.dart';
@@ -63,6 +65,11 @@ class AppPages {
       name: _Paths.DASHBOARD,
       page: () => const DashboardView(),
       binding: DashboardBinding(),
+    ),
+    GetPage(
+      name: Routes.PROFILE_EDIT,
+      page: () => const ProfileEditView(),
+      binding: ProfileEditBinding(),
     ),
   ];
 }

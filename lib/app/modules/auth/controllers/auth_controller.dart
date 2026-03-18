@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
 import '../../../core/utils/toast_helper.dart';
 import '../../../data/models/employee_model.dart';
@@ -54,53 +55,41 @@ class AuthController extends GetxController {
     loginMethod.value = method;
   }
 
-  // Validators
+  // Validators using FormBuilderValidators
   String? validateEmail(String? value) {
     if (loginMethod.value != 'email') return null;
-    if (value == null || value.isEmpty) {
-      return 'Email is required';
-    }
-    if (!GetUtils.isEmail(value)) {
-      return 'Please enter a valid email';
-    }
-    return null;
+    return FormBuilderValidators.compose([
+      FormBuilderValidators.required(errorText: 'Email is required'),
+      FormBuilderValidators.email(errorText: 'Please enter a valid email'),
+    ])(value);
   }
 
   String? validatePhone(String? value) {
     if (loginMethod.value != 'phone') return null;
-    if (value == null || value.isEmpty) {
-      return 'Phone number is required';
-    }
-    if (value.length < 8) {
-      return 'Please enter a valid phone number';
-    }
-    return null;
+    return FormBuilderValidators.compose([
+      FormBuilderValidators.required(errorText: 'Phone number is required'),
+      FormBuilderValidators.minLength(8,
+          errorText: 'Please enter a valid phone number'),
+    ])(value);
   }
 
-  String? validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Password is required';
-    }
-    if (value.length < 6) {
-      return 'Password must be at least 6 characters';
-    }
-    return null;
-  }
+  String? Function(String?) get validatePassword => FormBuilderValidators.compose([
+        FormBuilderValidators.required(errorText: 'Password is required'),
+        FormBuilderValidators.minLength(6,
+            errorText: 'Password must be at least 6 characters'),
+      ]);
 
-  String? validateName(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Name is required';
-    }
-    if (value.length < 2) {
-      return 'Name must be at least 2 characters';
-    }
-    return null;
-  }
+  String? Function(String?) get validateName => FormBuilderValidators.compose([
+        FormBuilderValidators.required(errorText: 'Name is required'),
+        FormBuilderValidators.minLength(2,
+            errorText: 'Name must be at least 2 characters'),
+      ]);
 
   String? validateConfirmPassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please confirm your password';
-    }
+    final requiredCheck = FormBuilderValidators.required(
+        errorText: 'Please confirm your password')(value);
+    if (requiredCheck != null) return requiredCheck;
+
     if (value != passwordController.text) {
       return 'Passwords do not match';
     }
