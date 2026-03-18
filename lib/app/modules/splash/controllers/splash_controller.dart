@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/storage_service.dart';
 import '../../../routes/app_pages.dart';
 
 class SplashController extends GetxController {
@@ -20,10 +21,19 @@ class SplashController extends GetxController {
   Future<void> _navigateToNext() async {
     debugPrint('Starting navigation delay...');
     await Future.delayed(AppDurations.splash);
-    debugPrint('Navigating to LOGIN...');
+
+    // Check if user is logged in
+    final isLoggedIn = StorageService.isLoggedIn();
+    debugPrint('Is logged in: $isLoggedIn');
 
     try {
-      Get.offAllNamed(Routes.LOGIN);
+      if (isLoggedIn) {
+        debugPrint('Navigating to MAIN...');
+        Get.offAllNamed(Routes.MAIN);
+      } else {
+        debugPrint('Navigating to LOGIN...');
+        Get.offAllNamed(Routes.LOGIN);
+      }
       debugPrint('Navigation successful');
     } catch (e) {
       debugPrint('Navigation error: $e');

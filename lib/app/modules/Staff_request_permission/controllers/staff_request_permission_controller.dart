@@ -2,40 +2,47 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../data/models/permission_request_model.dart';
+import '../data/providers/permission_request_provider.dart';
 
 class StaffRequestPermissionController extends GetxController {
   final formKey = GlobalKey<FormState>();
   final reasonController = TextEditingController();
 
+  late final PermissionRequestProvider _provider;
+
   // Form state
-  final selectedRole = Rxn<RoleOption>();
-  final selectedDepartment = Rxn<DepartmentOption>();
+  final selectedType = Rxn<PermissionTypeModel>();
   final fromDate = Rxn<DateTime>();
   final toDate = Rxn<DateTime>();
   final isLoading = false.obs;
+  final isSubmitting = false.obs;
+  final reasonText = ''.obs;
 
-  // Department options
-  final departments = <DepartmentOption>[].obs;
+  // Permission types from API
+  final permissionTypes = <PermissionTypeModel>[].obs;
 
   // Request history
   final requestHistory = <PermissionRequestModel>[].obs;
+  final stats = Rxn<PermissionStats>();
+
+  // Pagination
+  final currentPage = 1.obs;
+  final hasMorePages = true.obs;
+  final isLoadingMore = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    // Set default dates to today
+    _provider = Get.find<PermissionRequestProvider>();
     fromDate.value = DateTime.now();
     toDate.value = DateTime.now();
-    loadDepartments();
+    loadPermissionTypes();
     loadRequestHistory();
   }
 
-  void loadDepartments() {
-    departments.value = DepartmentOption.availableDepartments;
-  }
-
-  void selectDepartment(DepartmentOption? department) {
-    selectedDepartment.value = department;
+  /// Update reason text for reactive validation
+  void onReasonChanged(String value) {
+    reasonText.value = value;
   }
 
   @override
@@ -59,20 +66,19 @@ class StaffRequestPermissionController extends GetxController {
     return toDate.value!.difference(fromDate.value!).inDays + 1;
   }
 
-  void selectRole(RoleOption role) {
-    selectedRole.value = role;
+  void selectType(PermissionTypeModel type) {
+    selectedType.value = type;
   }
 
   Future<void> selectFromDate(BuildContext context) async {
     final picked = await showDatePicker(
       context: context,
       initialDate: fromDate.value ?? DateTime.now(),
-      firstDate: DateTime.now(),
+      firstDate: DateTime.now().subtract(const Duration(days: 30)),
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
     if (picked != null) {
       fromDate.value = picked;
-      // If toDate is before fromDate, update toDate
       if (toDate.value != null && toDate.value!.isBefore(picked)) {
         toDate.value = picked;
       }
@@ -83,7 +89,7 @@ class StaffRequestPermissionController extends GetxController {
     final picked = await showDatePicker(
       context: context,
       initialDate: toDate.value ?? fromDate.value ?? DateTime.now(),
-      firstDate: fromDate.value ?? DateTime.now(),
+      firstDate: fromDate.value ?? DateTime.now().subtract(const Duration(days: 30)),
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
     if (picked != null) {
@@ -95,22 +101,86 @@ class StaffRequestPermissionController extends GetxController {
     if (value == null || value.trim().isEmpty) {
       return 'Please enter your reason';
     }
-    if (value.trim().length < 10) {
-      return 'Reason must be at least 10 characters';
+    if (value.trim().length < 5) {
+      return 'Reason must be at least 5 characters';
+    }
+    if (value.trim().length > 1000) {
+      return 'Reason cannot exceed 1000 characters';
     }
     return null;
   }
 
   bool get isFormValid {
-    return selectedRole.value != null &&
+    final reason = reasonText.value.trim();
+    return selectedType.value != null &&
         fromDate.value != null &&
         toDate.value != null &&
-        reasonController.text.trim().length >= 10;
+        reason.length >= 5 &&
+        reason.length <= 1000;
   }
 
+  /// Load permission types from API
+  Future<void> loadPermissionTypes() async {
+    final response = await _provider.getTypes();
+
+    if (response.success) {
+      permissionTypes.value = response.data;
+    }
+  }
+
+  /// Load request history from API
+  Future<void> loadRequestHistory({bool refresh = false}) async {
+    if (refresh) {
+      currentPage.value = 1;
+      hasMorePages.value = true;
+    }
+
+    if (!hasMorePages.value && !refresh) return;
+
+    isLoading.value = currentPage.value == 1;
+    isLoadingMore.value = currentPage.value > 1;
+
+    try {
+      final response = await _provider.getRequests(
+        page: currentPage.value,
+        perPage: 15,
+      );
+
+      if (response.success) {
+        if (refresh || currentPage.value == 1) {
+          requestHistory.value = response.data;
+        } else {
+          requestHistory.addAll(response.data);
+        }
+
+        stats.value = response.stats;
+        hasMorePages.value = response.meta?.hasMorePages ?? false;
+
+        if (hasMorePages.value) {
+          currentPage.value++;
+        }
+      }
+    } finally {
+      isLoading.value = false;
+      isLoadingMore.value = false;
+    }
+  }
+
+  /// Load more data for pagination
+  Future<void> loadMore() async {
+    if (isLoadingMore.value || !hasMorePages.value) return;
+    await loadRequestHistory();
+  }
+
+  /// Refresh data
+  Future<void> refresh() async {
+    await loadRequestHistory(refresh: true);
+  }
+
+  /// Submit permission request
   Future<void> submitRequest() async {
     if (!formKey.currentState!.validate()) return;
-    if (selectedRole.value == null) {
+    if (selectedType.value == null) {
       Get.snackbar(
         'Error',
         'Please select a permission type',
@@ -120,34 +190,48 @@ class StaffRequestPermissionController extends GetxController {
       return;
     }
 
-    isLoading.value = true;
+    isSubmitting.value = true;
 
     try {
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
-
-      final request = PermissionRequestModel(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        role: selectedRole.value!.id,
+      final response = await _provider.createRequest(
+        type: selectedType.value!.value,
         reason: reasonController.text.trim(),
-        fromDate: fromDate.value!,
-        toDate: toDate.value!,
-        requestDate: DateTime.now(),
-        status: PermissionStatus.pending,
+        fromDate: DateFormat('yyyy-MM-dd').format(fromDate.value!),
+        toDate: DateFormat('yyyy-MM-dd').format(toDate.value!),
       );
 
-      // Add to history
-      requestHistory.insert(0, request);
+      if (response.success) {
+        // Add to history at the beginning
+        if (response.data != null) {
+          requestHistory.insert(0, response.data!);
+        }
 
-      // Reset form
-      resetForm();
+        // Update stats
+        if (stats.value != null) {
+          stats.value = PermissionStats(
+            total: stats.value!.total + 1,
+            pending: stats.value!.pending + 1,
+            approved: stats.value!.approved,
+            rejected: stats.value!.rejected,
+          );
+        }
 
-      Get.snackbar(
-        'Success',
-        'Your request has been submitted',
-        backgroundColor: const Color(0xFF5EA500).withValues(alpha: 0.1),
-        colorText: const Color(0xFF5EA500),
-      );
+        resetForm();
+
+        Get.snackbar(
+          'Success',
+          response.message ?? 'Your request has been submitted',
+          backgroundColor: const Color(0xFF5EA500).withValues(alpha: 0.1),
+          colorText: const Color(0xFF5EA500),
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          response.message ?? 'Failed to submit request',
+          backgroundColor: Colors.red.shade100,
+          colorText: Colors.red.shade900,
+        );
+      }
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -156,48 +240,60 @@ class StaffRequestPermissionController extends GetxController {
         colorText: Colors.red.shade900,
       );
     } finally {
+      isSubmitting.value = false;
+    }
+  }
+
+  /// Cancel a pending request
+  Future<void> cancelRequest(String uuid) async {
+    isLoading.value = true;
+
+    try {
+      final response = await _provider.cancelRequest(uuid);
+
+      if (response.success) {
+        // Remove from list
+        requestHistory.removeWhere((r) => r.uuid == uuid);
+
+        // Update stats
+        if (stats.value != null) {
+          stats.value = PermissionStats(
+            total: stats.value!.total - 1,
+            pending: stats.value!.pending - 1,
+            approved: stats.value!.approved,
+            rejected: stats.value!.rejected,
+          );
+        }
+
+        Get.snackbar(
+          'Success',
+          response.message ?? 'Request cancelled successfully',
+          backgroundColor: const Color(0xFF5EA500).withValues(alpha: 0.1),
+          colorText: const Color(0xFF5EA500),
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          response.message ?? 'Failed to cancel request',
+          backgroundColor: Colors.red.shade100,
+          colorText: Colors.red.shade900,
+        );
+      }
+    } finally {
       isLoading.value = false;
     }
   }
 
   void resetForm() {
-    selectedRole.value = null;
-    selectedDepartment.value = null;
+    selectedType.value = null;
     fromDate.value = DateTime.now();
     toDate.value = DateTime.now();
     reasonController.clear();
+    reasonText.value = '';
   }
 
-  void loadRequestHistory() {
-    // TODO: Load from API
-    // For now, using mock data
-    requestHistory.value = [
-      PermissionRequestModel(
-        id: '1',
-        role: 'leave',
-        reason: 'Family vacation to visit relatives',
-        fromDate: DateTime.now().subtract(const Duration(days: 5)),
-        toDate: DateTime.now().subtract(const Duration(days: 3)),
-        requestDate: DateTime.now().subtract(const Duration(days: 7)),
-        status: PermissionStatus.approved,
-      ),
-      PermissionRequestModel(
-        id: '2',
-        role: 'remote',
-        reason: 'Working from home due to home renovation',
-        fromDate: DateTime.now().subtract(const Duration(days: 2)),
-        toDate: DateTime.now().subtract(const Duration(days: 1)),
-        requestDate: DateTime.now().subtract(const Duration(days: 4)),
-        status: PermissionStatus.pending,
-      ),
-    ];
-  }
-
-  String getRoleName(String roleId) {
-    final role = RoleOption.availableRoles.firstWhere(
-      (r) => r.id == roleId,
-      orElse: () => const RoleOption(id: '', name: 'Unknown', description: ''),
-    );
-    return role.name;
+  String getTypeName(String typeValue) {
+    final type = permissionTypes.firstWhereOrNull((t) => t.value == typeValue);
+    return type?.label ?? typeValue;
   }
 }

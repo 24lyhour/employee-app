@@ -1,12 +1,13 @@
 import 'package:get/get.dart';
-import '../../../data/models/attendance_model.dart';
-import '../../../data/providers/attendance_provider.dart';
+import '../data/models/history_model.dart';
+import '../data/providers/history_provider.dart';
 
 class HistoryController extends GetxController {
-  final LegacyAttendanceProvider provider;
+  final AttendanceProvider provider;
   HistoryController({required this.provider});
 
-  final attendanceList = <LegacyAttendanceModel>[].obs;
+  final attendanceList = <AttendanceModel>[].obs;
+  final stats = Rxn<AttendanceStats>();
   final isLoading = false.obs;
   final selectedMonth = DateTime.now().obs;
 
@@ -19,15 +20,26 @@ class HistoryController extends GetxController {
   Future<void> _loadHistory() async {
     isLoading.value = true;
     try {
-      final history = await provider.getAttendanceHistory(
-        userId: '1',
-        startDate: DateTime(selectedMonth.value.year, selectedMonth.value.month, 1),
-        endDate: DateTime(selectedMonth.value.year, selectedMonth.value.month + 1, 0),
+      final startDate = DateTime(selectedMonth.value.year, selectedMonth.value.month, 1);
+      final endDate = DateTime(selectedMonth.value.year, selectedMonth.value.month + 1, 0);
+
+      final response = await provider.getHistory(
+        startDate: startDate.toIso8601String().split('T')[0],
+        endDate: endDate.toIso8601String().split('T')[0],
       );
-      attendanceList.assignAll(history);
+
+      if (response.success) {
+        attendanceList.assignAll(response.data);
+        stats.value = response.stats;
+      }
     } finally {
       isLoading.value = false;
     }
+  }
+
+  /// Refresh history data
+  Future<void> refresh() async {
+    await _loadHistory();
   }
 
   void previousMonth() {
@@ -63,4 +75,12 @@ class HistoryController extends GetxController {
     return selectedMonth.value.year < now.year ||
         (selectedMonth.value.year == now.year && selectedMonth.value.month < now.month);
   }
+
+  // Statistics getters
+  int get totalDays => stats.value?.totalDays ?? 0;
+  int get presentDays => stats.value?.presentDays ?? 0;
+  int get lateDays => stats.value?.lateDays ?? 0;
+  int get absentDays => stats.value?.absentDays ?? 0;
+  double get totalWorkHours => stats.value?.totalWorkHours ?? 0;
+  double get averageWorkHours => stats.value?.averageWorkHours ?? 0;
 }

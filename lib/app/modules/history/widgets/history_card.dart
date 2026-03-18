@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_constants.dart';
-import '../../../data/models/attendance_model.dart';
+import '../data/models/history_model.dart';
 
 class HistoryCard extends StatelessWidget {
-  final LegacyAttendanceModel attendance;
+  final AttendanceModel attendance;
 
   const HistoryCard({
     super.key,
@@ -12,6 +12,8 @@ class HistoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final date = _parseDate(attendance.attendanceDate);
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -29,14 +31,14 @@ class HistoryCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '${attendance.date.day}',
+                    date != null ? '${date.day}' : '--',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: Theme.of(context).colorScheme.onPrimaryContainer,
                         ),
                   ),
                   Text(
-                    _getWeekday(attendance.date.weekday),
+                    date != null ? _getWeekday(date.weekday) : '--',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: Theme.of(context).colorScheme.onPrimaryContainer,
                         ),
@@ -54,24 +56,27 @@ class HistoryCard extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.login,
-                        size: 16,
+                        size: 14,
                         color: AppColors.checkIn,
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 2),
                       Text(
                         attendance.checkInTimeFormatted,
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: 8),
                       Icon(
                         Icons.logout,
-                        size: 16,
+                        size: 14,
                         color: AppColors.checkOut,
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        attendance.checkOutTimeFormatted,
-                        style: Theme.of(context).textTheme.bodyMedium,
+                      const SizedBox(width: 2),
+                      Flexible(
+                        child: Text(
+                          attendance.checkOutTimeFormatted,
+                          style: Theme.of(context).textTheme.bodySmall,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ],
                   ),
@@ -86,11 +91,20 @@ class HistoryCard extends StatelessWidget {
               ),
             ),
             // Status Badge
-            _StatusBadge(status: attendance.status),
+            _StatusBadge(status: attendance.status, statusLabel: attendance.statusLabel),
           ],
         ),
       ),
     );
+  }
+
+  DateTime? _parseDate(String? dateStr) {
+    if (dateStr == null) return null;
+    try {
+      return DateTime.parse(dateStr);
+    } catch (_) {
+      return null;
+    }
   }
 
   String _getWeekday(int weekday) {
@@ -100,9 +114,10 @@ class HistoryCard extends StatelessWidget {
 }
 
 class _StatusBadge extends StatelessWidget {
-  final AttendanceStatus status;
+  final String status;
+  final String? statusLabel;
 
-  const _StatusBadge({required this.status});
+  const _StatusBadge({required this.status, this.statusLabel});
 
   @override
   Widget build(BuildContext context) {
@@ -110,22 +125,26 @@ class _StatusBadge extends StatelessWidget {
     String label;
 
     switch (status) {
-      case AttendanceStatus.present:
+      case 'present':
         color = AppColors.success;
-        label = AppStrings.present;
+        label = statusLabel ?? AppStrings.present;
         break;
-      case AttendanceStatus.late:
+      case 'late':
         color = AppColors.warning;
-        label = AppStrings.late;
+        label = statusLabel ?? AppStrings.late;
         break;
-      case AttendanceStatus.absent:
+      case 'absent':
         color = AppColors.error;
-        label = AppStrings.absent;
+        label = statusLabel ?? AppStrings.absent;
         break;
-      case AttendanceStatus.leave:
+      case 'leave':
+      case 'on_leave':
         color = AppColors.info;
-        label = AppStrings.leave;
+        label = statusLabel ?? AppStrings.leave;
         break;
+      default:
+        color = Colors.grey;
+        label = statusLabel ?? status;
     }
 
     return Container(

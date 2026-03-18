@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/staff_request_permission_controller.dart';
-import '../data/models/permission_request_model.dart';
 import '../widgets/widgets.dart';
 
-class StaffRequestPermissionView extends GetView<StaffRequestPermissionController> {
+class StaffRequestPermissionView
+    extends GetView<StaffRequestPermissionController> {
   const StaffRequestPermissionView({super.key});
 
   static const _primaryColor = Color(0xFF5EA500);
@@ -20,65 +20,172 @@ class StaffRequestPermissionView extends GetView<StaffRequestPermissionControlle
         elevation: 0,
         surfaceTintColor: Colors.transparent,
       ),
-      body: SingleChildScrollView(
+      body: RefreshIndicator(
+        onRefresh: controller.refresh,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              // Header Card with Stats
+              _buildHeaderCard(),
+
+              // Form
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Form(
+                  key: controller.formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Permission Type Section
+                      SectionTitle(
+                        title: 'select_permission_type'.tr,
+                        icon: Icons.category,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildTypeSelector(),
+                      const SizedBox(height: 24),
+
+                      // Date Range Section
+                      SectionTitle(
+                        title: 'select_date_range'.tr,
+                        icon: Icons.calendar_month,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildDateRangeSelector(context),
+                      const SizedBox(height: 24),
+
+                      // Reason Section
+                      SectionTitle(
+                        title: 'reason'.tr,
+                        icon: Icons.edit_note,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildReasonField(),
+                      const SizedBox(height: 32),
+
+                      // Submit Button
+                      _buildSubmitButton(),
+                      const SizedBox(height: 32),
+
+                      // Request History Section
+                      _buildHistorySection(),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeaderCard() {
+    return Obx(() {
+      final stats = controller.stats.value;
+      return Container(
+        margin: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF5EA500), Color(0xFF7BC62D)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: _primaryColor.withValues(alpha: 0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    Icons.assignment,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'permission_requests'.tr,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'submit_your_request'.tr,
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.8),
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            if (stats != null) ...[
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  _buildStatItem('total'.tr, stats.total),
+                  _buildStatItem('pending'.tr, stats.pending),
+                  _buildStatItem('approved'.tr, stats.approved),
+                  _buildStatItem('rejected'.tr, stats.rejected),
+                ],
+              ),
+            ],
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget _buildStatItem(String label, int value) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(8),
+        ),
         child: Column(
           children: [
-            // Header Card
-            const PermissionHeaderCard(),
-
-            // Form
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Form(
-                key: controller.formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Permission Type Section
-                    SectionTitle(
-                      title: 'select_permission_type'.tr,
-                      icon: Icons.category,
-                    ),
-                    const SizedBox(height: 12),
-                    _buildRoleSelector(),
-                    const SizedBox(height: 24),
-
-                    // Department Section
-                    SectionTitle(
-                      title: 'select_department'.tr,
-                      icon: Icons.business,
-                    ),
-                    const SizedBox(height: 12),
-                    _buildDepartmentSelector(),
-                    const SizedBox(height: 24),
-
-                    // Date Range Section
-                    SectionTitle(
-                      title: 'select_date_range'.tr,
-                      icon: Icons.calendar_month,
-                    ),
-                    const SizedBox(height: 12),
-                    _buildDateRangeSelector(context),
-                    const SizedBox(height: 24),
-
-                    // Reason Section
-                    SectionTitle(
-                      title: 'reason'.tr,
-                      icon: Icons.edit_note,
-                    ),
-                    const SizedBox(height: 12),
-                    _buildReasonField(),
-                    const SizedBox(height: 32),
-
-                    // Submit Button
-                    _buildSubmitButton(),
-                    const SizedBox(height: 32),
-
-                    // Request History Section
-                    _buildHistorySection(),
-                    const SizedBox(height: 24),
-                  ],
-                ),
+            Text(
+              value.toString(),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              label,
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.8),
+                fontSize: 10,
               ),
             ),
           ],
@@ -87,98 +194,28 @@ class StaffRequestPermissionView extends GetView<StaffRequestPermissionControlle
     );
   }
 
-  Widget _buildRoleSelector() {
-    return Obx(() => Column(
-          children: RoleOption.availableRoles.map((role) {
-            final isSelected = controller.selectedRole.value?.id == role.id;
-            return RoleSelectorItem(
-              role: role,
-              isSelected: isSelected,
-              onTap: () => controller.selectRole(role),
-            );
-          }).toList(),
-        ));
-  }
-
-  Widget _buildDepartmentSelector() {
-    return Obx(() => Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.shade100,
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
+  Widget _buildTypeSelector() {
+    return Obx(() {
+      if (controller.permissionTypes.isEmpty) {
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: CircularProgressIndicator(),
           ),
-          child: DropdownButtonFormField<DepartmentOption>(
-            value: controller.selectedDepartment.value,
-            decoration: InputDecoration(
-              hintText: 'choose_department'.tr,
-              hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 12),
-              filled: true,
-              fillColor: Colors.white,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-              prefixIcon: Container(
-                padding: const EdgeInsets.all(12),
-                child: Icon(
-                  Icons.apartment,
-                  color: controller.selectedDepartment.value != null
-                      ? _primaryColor
-                      : Colors.grey.shade400,
-                  size: 20,
-                ),
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: Colors.grey.shade200),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: Colors.grey.shade200),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: const BorderSide(color: _primaryColor, width: 2),
-              ),
-            ),
-            icon: Icon(
-              Icons.keyboard_arrow_down_rounded,
-              color: Colors.grey.shade600,
-            ),
-            dropdownColor: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            style: TextStyle(
-              color: Colors.grey.shade800,
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-            ),
-            items: controller.departments.map((department) {
-              return DropdownMenuItem<DepartmentOption>(
-                value: department,
-                child: Text(_getDepartmentName(department.id)),
-              );
-            }).toList(),
-            onChanged: controller.selectDepartment,
-          ),
-        ));
-  }
+        );
+      }
 
-  String _getDepartmentName(String id) {
-    final Map<String, String> departmentKeys = {
-      'hr': 'human_resources',
-      'it': 'it_department',
-      'finance': 'finance',
-      'marketing': 'marketing',
-      'sales': 'sales',
-      'operations': 'operations',
-      'engineering': 'engineering',
-      'design': 'design',
-      'support': 'customer_support',
-      'admin': 'administration',
-    };
-    return (departmentKeys[id] ?? id).tr;
+      return Column(
+        children: controller.permissionTypes.map((type) {
+          final isSelected = controller.selectedType.value?.value == type.value;
+          return TypeSelectorItem(
+            type: type,
+            isSelected: isSelected,
+            onTap: () => controller.selectType(type),
+          );
+        }).toList(),
+      );
+    });
   }
 
   Widget _buildDateRangeSelector(BuildContext context) {
@@ -225,7 +262,8 @@ class StaffRequestPermissionView extends GetView<StaffRequestPermissionControlle
               const SizedBox(height: 10),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
@@ -234,7 +272,8 @@ class StaffRequestPermissionView extends GetView<StaffRequestPermissionControlle
                     ],
                   ),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: _primaryColor.withValues(alpha: 0.2)),
+                  border:
+                      Border.all(color: _primaryColor.withValues(alpha: 0.2)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -283,8 +322,10 @@ class StaffRequestPermissionView extends GetView<StaffRequestPermissionControlle
       child: TextFormField(
         controller: controller.reasonController,
         maxLines: 3,
+        maxLength: 1000,
         style: const TextStyle(fontSize: 12),
         validator: controller.validateReason,
+        onChanged: controller.onReasonChanged,
         decoration: InputDecoration(
           hintText: 'describe_reason'.tr,
           hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 12),
@@ -314,69 +355,100 @@ class StaffRequestPermissionView extends GetView<StaffRequestPermissionControlle
 
   Widget _buildSubmitButton() {
     return Obx(() {
-      final isEnabled = !controller.isLoading.value && controller.selectedRole.value != null;
+      final isEnabled = !controller.isSubmitting.value && controller.isFormValid;
       return Container(
-          width: double.infinity,
-          height: 46,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: isEnabled
-                ? [
-                    BoxShadow(
-                      color: _primaryColor.withValues(alpha: 0.3),
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
-                    ),
-                  ]
-                : null,
-          ),
-          child: ElevatedButton(
-            onPressed: (controller.isLoading.value || controller.selectedRole.value == null)
-                ? null
-                : controller.submitRequest,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: _primaryColor,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              disabledBackgroundColor: _primaryColor.withValues(alpha: 0.6),
-            ),
-            child: controller.isLoading.value
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.send_rounded, size: 16),
-                      const SizedBox(width: 8),
-                      Text(
-                        'submit_request'.tr,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.3,
-                        ),
-                      ),
-                    ],
+        width: double.infinity,
+        height: 46,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: isEnabled
+              ? [
+                  BoxShadow(
+                    color: _primaryColor.withValues(alpha: 0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
                   ),
+                ]
+              : null,
+        ),
+        child: ElevatedButton(
+          onPressed: (controller.isSubmitting.value || !controller.isFormValid)
+              ? null
+              : controller.submitRequest,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: _primaryColor,
+            foregroundColor: Colors.white,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            disabledBackgroundColor: _primaryColor.withValues(alpha: 0.6),
           ),
-        );
+          child: controller.isSubmitting.value
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                )
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.send_rounded, size: 16),
+                    const SizedBox(width: 8),
+                    Text(
+                      'submit_request'.tr,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ],
+                ),
+        ),
+      );
     });
   }
 
   Widget _buildHistorySection() {
     return Obx(() {
-      if (controller.requestHistory.isEmpty) {
-        return const SizedBox.shrink();
+      if (controller.isLoading.value && controller.requestHistory.isEmpty) {
+        return const Center(
+          child: Padding(
+            padding: EdgeInsets.all(40),
+            child: CircularProgressIndicator(),
+          ),
+        );
       }
+
+      if (controller.requestHistory.isEmpty) {
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.all(40),
+            child: Column(
+              children: [
+                Icon(
+                  Icons.history,
+                  size: 48,
+                  color: Colors.grey.shade300,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'no_requests_yet'.tr,
+                  style: TextStyle(
+                    color: Colors.grey.shade500,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -387,8 +459,20 @@ class StaffRequestPermissionView extends GetView<StaffRequestPermissionControlle
           const SizedBox(height: 12),
           ...controller.requestHistory.map((request) => PermissionHistoryCard(
                 request: request,
-                roleName: controller.getRoleName(request.role),
+                typeName: controller.getTypeName(request.type),
               )),
+          if (controller.hasMorePages.value)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: controller.isLoadingMore.value
+                    ? const CircularProgressIndicator()
+                    : TextButton(
+                        onPressed: controller.loadMore,
+                        child: Text('load_more'.tr),
+                      ),
+              ),
+            ),
         ],
       );
     });

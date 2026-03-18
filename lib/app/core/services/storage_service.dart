@@ -53,11 +53,7 @@ class StorageService {
 
   static Future<void> saveToken(String token) async {
     await instance._ensureInitialized();
-    try {
-      await _prefs?.setString(keyToken, token);
-    } catch (e) {
-      debugPrint('saveToken error: $e');
-    }
+    await _prefs?.setString(keyToken, token);
   }
 
   static Future<void> removeToken() async {

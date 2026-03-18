@@ -160,6 +160,15 @@ class AttendanceModel {
         return '#6b7280'; // gray
     }
   }
+
+  /// Formatted check-in time for display
+  String get checkInTimeFormatted => checkInTime ?? '--:--';
+
+  /// Formatted check-out time for display
+  String get checkOutTimeFormatted => checkOutTime ?? '--:--';
+
+  /// Formatted work duration for display
+  String get workDurationFormatted => workHoursFormatted ?? '0h 0m';
 }
 
 /// Attendance scan model for check-in/out scans
@@ -345,18 +354,30 @@ class AttendanceHistoryResponse {
   });
 
   factory AttendanceHistoryResponse.fromJson(Map<String, dynamic> json) {
+    // API returns nested structure: { data: { data: [...], meta: {...} } }
+    final dataWrapper = json['data'];
+    List<dynamic>? dataList;
+    Map<String, dynamic>? metaData;
+
+    if (dataWrapper is Map<String, dynamic>) {
+      // Nested structure from Laravel Resource collection
+      dataList = dataWrapper['data'] as List<dynamic>?;
+      metaData = dataWrapper['meta'] as Map<String, dynamic>?;
+    } else if (dataWrapper is List) {
+      // Direct list (fallback)
+      dataList = dataWrapper;
+      metaData = json['meta'] as Map<String, dynamic>?;
+    }
+
     return AttendanceHistoryResponse(
       success: json['success'] ?? false,
-      data: json['data'] != null
-          ? (json['data'] as List)
-              .map((a) => AttendanceModel.fromJson(a))
-              .toList()
+      data: dataList != null
+          ? dataList.map((a) => AttendanceModel.fromJson(a)).toList()
           : [],
       stats: json['stats'] != null
           ? AttendanceStats.fromJson(json['stats'])
           : null,
-      meta:
-          json['meta'] != null ? PaginationMeta.fromJson(json['meta']) : null,
+      meta: metaData != null ? PaginationMeta.fromJson(metaData) : null,
     );
   }
 }

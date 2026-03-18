@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import '../data/models/permission_request_model.dart';
 
-class RoleSelectorItem extends StatelessWidget {
-  final RoleOption role;
+class TypeSelectorItem extends StatelessWidget {
+  final PermissionTypeModel type;
   final bool isSelected;
   final VoidCallback onTap;
 
-  const RoleSelectorItem({
+  const TypeSelectorItem({
     super.key,
-    required this.role,
+    required this.type,
     required this.isSelected,
     required this.onTap,
   });
@@ -59,7 +59,7 @@ class RoleSelectorItem extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
-                _getRoleIcon(role.id),
+                _getTypeIcon(type.value),
                 size: 18,
                 color: isSelected ? _primaryColor : Colors.grey.shade600,
               ),
@@ -70,7 +70,7 @@ class RoleSelectorItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    role.name,
+                    type.label,
                     style: TextStyle(
                       color: isSelected ? _primaryColor : Colors.grey.shade800,
                       fontWeight: FontWeight.w600,
@@ -79,7 +79,7 @@ class RoleSelectorItem extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    role.description,
+                    type.description,
                     style: TextStyle(
                       color: Colors.grey.shade500,
                       fontSize: 11,
@@ -113,8 +113,8 @@ class RoleSelectorItem extends StatelessWidget {
     );
   }
 
-  IconData _getRoleIcon(String roleId) {
-    switch (roleId) {
+  IconData _getTypeIcon(String typeValue) {
+    switch (typeValue) {
       case 'leave':
         return Icons.beach_access;
       case 'overtime':

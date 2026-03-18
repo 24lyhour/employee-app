@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import '../../../core/utils/toast_helper.dart';
-import '../../../data/models/employee_model.dart';
-import '../../../data/providers/auth_provider.dart';
+import '../../auth/data/models/employee_model.dart';
+import '../../auth/data/providers/auth_provider.dart';
 import '../../../routes/app_pages.dart';
 
 class ProfileController extends GetxController {
@@ -59,18 +59,6 @@ class ProfileController extends GetxController {
     isLoading.value = true;
     try {
       await authProvider.logout();
-      Get.offAllNamed(Routes.LOGIN);
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  /// Logout from all devices
-  Future<void> logoutAll() async {
-    isLoading.value = true;
-    try {
-      await authProvider.logoutAll();
-      ToastHelper.showSuccess('Logged out from all devices');
       Get.offAllNamed(Routes.LOGIN);
     } finally {
       isLoading.value = false;

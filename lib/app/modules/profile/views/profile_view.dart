@@ -186,20 +186,13 @@ class ProfileView extends GetView<ProfileController> {
                 ),
                 const SizedBox(height: 16),
 
-                // Logout options
+                // Logout
                 _MenuItem(
                   icon: Icons.logout,
                   label: 'logout'.tr,
                   iconColor: AppColors.error,
                   textColor: AppColors.error,
                   onTap: () => _showLogoutDialog(context),
-                ),
-                _MenuItem(
-                  icon: Icons.logout,
-                  label: 'logout_all_devices'.tr,
-                  iconColor: AppColors.error,
-                  textColor: AppColors.error,
-                  onTap: () => _showLogoutAllDialog(context),
                 ),
               ],
             ),
@@ -224,32 +217,6 @@ class ProfileView extends GetView<ProfileController> {
             onPressed: () {
               Navigator.pop(context);
               controller.logout();
-            },
-            child: Text(
-              'logout'.tr,
-              style: TextStyle(color: AppColors.error),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showLogoutAllDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('logout_all_devices'.tr),
-        content: Text('logout_all_confirm'.tr),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('cancel'.tr),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              controller.logoutAll();
             },
             child: Text(
               'logout'.tr,

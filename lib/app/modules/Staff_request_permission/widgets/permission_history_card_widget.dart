@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../data/models/permission_request_model.dart';
+import '../controllers/staff_request_permission_controller.dart';
 import 'status_badge_widget.dart';
 
 class PermissionHistoryCard extends StatelessWidget {
   final PermissionRequestModel request;
-  final String roleName;
+  final String typeName;
 
   const PermissionHistoryCard({
     super.key,
     required this.request,
-    required this.roleName,
+    required this.typeName,
   });
 
   static const _primaryColor = Color(0xFF5EA500);
@@ -41,7 +42,8 @@ class PermissionHistoryCard extends StatelessWidget {
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: Colors.grey.shade50,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(10)),
               ),
               child: Row(
                 children: [
@@ -52,7 +54,7 @@ class PermissionHistoryCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Icon(
-                      _getRoleIcon(request.role),
+                      _getTypeIcon(request.type),
                       size: 14,
                       color: _primaryColor,
                     ),
@@ -63,7 +65,7 @@ class PermissionHistoryCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          roleName,
+                          request.typeLabel ?? typeName,
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 12,
@@ -71,7 +73,8 @@ class PermissionHistoryCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 1),
                         Text(
-                          '${'requested_on'.tr} ${DateFormat('dd MMM yyyy').format(request.requestDate)}',
+                          request.requestDateFormatted ??
+                              '${'requested_on'.tr} ${DateFormat('dd MMM yyyy').format(request.requestDate)}',
                           style: TextStyle(
                             fontSize: 10,
                             color: Colors.grey.shade500,
@@ -97,7 +100,8 @@ class PermissionHistoryCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.date_range, size: 12, color: Colors.grey.shade500),
+                      Icon(Icons.date_range,
+                          size: 12, color: Colors.grey.shade500),
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
@@ -110,7 +114,8 @@ class PermissionHistoryCard extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 3),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade100,
                           borderRadius: BorderRadius.circular(4),
@@ -155,6 +160,8 @@ class PermissionHistoryCard extends StatelessWidget {
   }
 
   void _showDetailDialog(BuildContext context) {
+    final controller = Get.find<StaffRequestPermissionController>();
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -192,7 +199,7 @@ class PermissionHistoryCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
-                    _getRoleIcon(request.role),
+                    _getTypeIcon(request.type),
                     size: 24,
                     color: _primaryColor,
                   ),
@@ -203,7 +210,7 @@ class PermissionHistoryCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        roleName,
+                        request.typeLabel ?? typeName,
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -211,7 +218,8 @@ class PermissionHistoryCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        '${'requested_on'.tr} ${DateFormat('dd MMM yyyy, HH:mm').format(request.requestDate)}',
+                        request.requestDateFormatted ??
+                            '${'requested_on'.tr} ${DateFormat('dd MMM yyyy, HH:mm').format(request.requestDate)}',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey.shade500,
@@ -229,7 +237,8 @@ class PermissionHistoryCard extends StatelessWidget {
             _buildDetailItem(
               icon: Icons.date_range,
               label: 'date_range'.tr,
-              value: '${DateFormat('dd MMM yyyy').format(request.fromDate)} - ${DateFormat('dd MMM yyyy').format(request.toDate)}',
+              value:
+                  '${DateFormat('dd MMM yyyy').format(request.fromDate)} - ${DateFormat('dd MMM yyyy').format(request.toDate)}',
             ),
             const SizedBox(height: 12),
 
@@ -237,7 +246,8 @@ class PermissionHistoryCard extends StatelessWidget {
             _buildDetailItem(
               icon: Icons.timelapse,
               label: 'duration'.tr,
-              value: '${request.totalDays} ${request.totalDays > 1 ? 'days'.tr : 'day'.tr}',
+              value:
+                  '${request.totalDays} ${request.totalDays > 1 ? 'days'.tr : 'day'.tr}',
             ),
             const SizedBox(height: 12),
 
@@ -249,7 +259,8 @@ class PermissionHistoryCard extends StatelessWidget {
               isMultiLine: true,
             ),
 
-            if (request.reviewNote != null && request.reviewNote!.isNotEmpty) ...[
+            if (request.reviewNote != null &&
+                request.reviewNote!.isNotEmpty) ...[
               const SizedBox(height: 12),
               _buildDetailItem(
                 icon: Icons.comment,
@@ -259,33 +270,112 @@ class PermissionHistoryCard extends StatelessWidget {
               ),
             ],
 
+            if (request.rejectedReason != null &&
+                request.rejectedReason!.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              _buildDetailItem(
+                icon: Icons.cancel,
+                label: 'rejected_reason'.tr,
+                value: request.rejectedReason!,
+                isMultiLine: true,
+              ),
+            ],
+
+            if (request.reviewerName.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              _buildDetailItem(
+                icon: Icons.person,
+                label: 'reviewed_by'.tr,
+                value: request.reviewerName,
+              ),
+            ],
+
             const SizedBox(height: 20),
 
-            // Close Button
-            SizedBox(
-              width: double.infinity,
-              child: TextButton(
-                onPressed: () => Navigator.pop(context),
-                style: TextButton.styleFrom(
-                  backgroundColor: Colors.grey.shade100,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+            // Action Buttons
+            Row(
+              children: [
+                // Cancel Button (only for pending)
+                if (request.isPending && request.uuid != null)
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _showCancelConfirmation(context, controller);
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.red.shade50,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: Text(
+                        'cancel_request'.tr,
+                        style: TextStyle(
+                          color: Colors.red.shade700,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ),
+                if (request.isPending && request.uuid != null)
+                  const SizedBox(width: 12),
+
+                // Close Button
+                Expanded(
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.grey.shade100,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Text(
+                      'close'.tr,
+                      style: TextStyle(
+                        color: Colors.grey.shade700,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
                   ),
                 ),
-                child: Text(
-                  'close'.tr,
-                  style: TextStyle(
-                    color: Colors.grey.shade700,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                  ),
-                ),
-              ),
+              ],
             ),
             const SizedBox(height: 10),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showCancelConfirmation(
+      BuildContext context, StaffRequestPermissionController controller) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('cancel_request'.tr),
+        content: Text('cancel_request_confirmation'.tr),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('no'.tr),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              if (request.uuid != null) {
+                controller.cancelRequest(request.uuid!);
+              }
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text('yes'.tr),
+          ),
+        ],
       ),
     );
   }
@@ -297,7 +387,8 @@ class PermissionHistoryCard extends StatelessWidget {
     bool isMultiLine = false,
   }) {
     return Row(
-      crossAxisAlignment: isMultiLine ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+      crossAxisAlignment:
+          isMultiLine ? CrossAxisAlignment.start : CrossAxisAlignment.center,
       children: [
         Container(
           padding: const EdgeInsets.all(8),
@@ -336,8 +427,8 @@ class PermissionHistoryCard extends StatelessWidget {
     );
   }
 
-  IconData _getRoleIcon(String roleId) {
-    switch (roleId) {
+  IconData _getTypeIcon(String typeValue) {
+    switch (typeValue) {
       case 'leave':
         return Icons.beach_access;
       case 'overtime':

@@ -39,7 +39,7 @@ class AttendanceView extends GetView<AttendanceController> {
                       ),
                 ),
                 const SizedBox(height: 48),
-                if (controller.canCheckIn)
+                if (controller.canCheckIn.value)
                   CheckButton(
                     label: 'check_in'.tr,
                     icon: Icons.login,
@@ -47,7 +47,7 @@ class AttendanceView extends GetView<AttendanceController> {
                     onPressed: controller.isLoading.value ? null : controller.checkIn,
                     isLoading: controller.isLoading.value,
                   )
-                else if (controller.canCheckOut)
+                else if (controller.canCheckOut.value)
                   CheckButton(
                     label: 'check_out'.tr,
                     icon: Icons.logout,
@@ -60,7 +60,7 @@ class AttendanceView extends GetView<AttendanceController> {
                 if (!controller.isCheckedOut) ...[
                   const SizedBox(height: 16),
                   Text(
-                    controller.canCheckIn ? 'tap_to_check_in'.tr : 'tap_to_check_out'.tr,
+                    controller.canCheckIn.value ? 'tap_to_check_in'.tr : 'tap_to_check_out'.tr,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),

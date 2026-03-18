@@ -1,26 +1,8 @@
-import 'package:get/get.dart';
 import '../models/attendance_model.dart';
-import '../../../../config/flavor_config.dart';
+import '../../../../core/services/base_provider.dart';
 import '../../../../core/services/storage_service.dart';
 
-class AttendanceProvider extends GetConnect {
-  @override
-  void onInit() {
-    httpClient.baseUrl = AppFlavorConfig.baseUrl;
-    httpClient.timeout = const Duration(seconds: 30);
-
-    // Add auth header for protected routes
-    httpClient.addRequestModifier<dynamic>((request) async {
-      final token = StorageService.getToken();
-      if (token != null) {
-        request.headers['Authorization'] = 'Bearer $token';
-      }
-      request.headers['Accept'] = 'application/json';
-      request.headers['Content-Type'] = 'application/json';
-      return request;
-    });
-  }
-
+class AttendanceProvider extends BaseProvider {
   /// Get today's attendance status
   Future<TodayAttendanceResponse> getTodayAttendance() async {
     try {
@@ -75,7 +57,6 @@ class AttendanceProvider extends GetConnect {
         'notes': notes,
       };
 
-      // Remove null values
       body.removeWhere((key, value) => value == null);
 
       final response = await post(
@@ -86,7 +67,6 @@ class AttendanceProvider extends GetConnect {
       if (response.statusCode == 200) {
         return ScanResponse.fromJson(response.body);
       } else if (response.statusCode == 422) {
-        // Validation or geofence error
         return ScanResponse(
           success: false,
           message: response.body['message'] ?? 'Check-in failed',
@@ -135,7 +115,6 @@ class AttendanceProvider extends GetConnect {
         'notes': notes,
       };
 
-      // Remove null values
       body.removeWhere((key, value) => value == null);
 
       final response = await post(
@@ -146,7 +125,6 @@ class AttendanceProvider extends GetConnect {
       if (response.statusCode == 200) {
         return ScanResponse.fromJson(response.body);
       } else if (response.statusCode == 422) {
-        // Validation or geofence error
         return ScanResponse(
           success: false,
           message: response.body['message'] ?? 'Check-out failed',
@@ -194,9 +172,8 @@ class AttendanceProvider extends GetConnect {
         queryParams['end_date'] = endDate;
       }
 
-      final queryString = queryParams.entries
-          .map((e) => '${e.key}=${e.value}')
-          .join('&');
+      final queryString =
+          queryParams.entries.map((e) => '${e.key}=${e.value}').join('&');
 
       final response =
           await get('/api/v1/employee/attendance/history?$queryString');
@@ -205,21 +182,12 @@ class AttendanceProvider extends GetConnect {
         return AttendanceHistoryResponse.fromJson(response.body);
       } else if (response.statusCode == 401) {
         await StorageService.clearAll();
-        return AttendanceHistoryResponse(
-          success: false,
-          data: [],
-        );
+        return AttendanceHistoryResponse(success: false, data: []);
       } else {
-        return AttendanceHistoryResponse(
-          success: false,
-          data: [],
-        );
+        return AttendanceHistoryResponse(success: false, data: []);
       }
     } catch (e) {
-      return AttendanceHistoryResponse(
-        success: false,
-        data: [],
-      );
+      return AttendanceHistoryResponse(success: false, data: []);
     }
   }
 }

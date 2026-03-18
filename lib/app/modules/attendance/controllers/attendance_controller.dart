@@ -1,16 +1,23 @@
 import 'dart:async';
 import 'package:get/get.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../../core/utils/toast_helper.dart';
-import '../../../data/models/attendance_model.dart';
-import '../../../data/providers/attendance_provider.dart';
+import '../data/models/attendance_model.dart';
+import '../data/providers/attendance_provider.dart';
 
 class AttendanceController extends GetxController {
-  final LegacyAttendanceProvider provider;
+  final AttendanceProvider provider;
   AttendanceController({required this.provider});
 
-  final todayAttendance = Rxn<LegacyAttendanceModel>();
+  final todayAttendance = Rxn<AttendanceModel>();
   final currentTime = DateTime.now().obs;
   final isLoading = false.obs;
+  final canCheckIn = true.obs;
+  final canCheckOut = false.obs;
+
+  // Location
+  final currentPosition = Rxn<Position>();
+  final isGettingLocation = false.obs;
 
   Timer? _timer;
 
@@ -36,16 +43,19 @@ class AttendanceController extends GetxController {
   Future<void> _loadTodayAttendance() async {
     isLoading.value = true;
     try {
-      todayAttendance.value = await provider.getTodayAttendance('1');
+      final response = await provider.getTodayAttendance();
+      if (response.success) {
+        todayAttendance.value = response.attendance;
+        canCheckIn.value = response.canCheckIn;
+        canCheckOut.value = response.canCheckOut;
+      }
     } finally {
       isLoading.value = false;
     }
   }
 
-  bool get isCheckedIn => todayAttendance.value?.isCheckedIn ?? false;
-  bool get isCheckedOut => todayAttendance.value?.isCheckedOut ?? false;
-  bool get canCheckIn => !isCheckedIn;
-  bool get canCheckOut => isCheckedIn && !isCheckedOut;
+  bool get isCheckedIn => todayAttendance.value?.hasCheckedIn ?? false;
+  bool get isCheckedOut => todayAttendance.value?.hasCheckedOut ?? false;
 
   String get formattedTime {
     final time = currentTime.value;
@@ -62,64 +72,150 @@ class AttendanceController extends GetxController {
     return '${days[date.weekday % 7]}, ${date.day} ${months[date.month - 1]} ${date.year}';
   }
 
+  String? get checkInTime => todayAttendance.value?.checkInTime;
+  String? get checkOutTime => todayAttendance.value?.checkOutTime;
+
+  /// Get current location
+  Future<Position?> _getCurrentLocation() async {
+    isGettingLocation.value = true;
+    try {
+      // Check permission
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          ToastHelper.showError('Location permission denied');
+          return null;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        ToastHelper.showError('Location permission permanently denied. Please enable in settings.');
+        return null;
+      }
+
+      // Get position
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
+      currentPosition.value = position;
+      return position;
+    } catch (e) {
+      ToastHelper.showError('Failed to get location: $e');
+      return null;
+    } finally {
+      isGettingLocation.value = false;
+    }
+  }
+
+  /// Check-in with QR code
+  Future<void> checkInWithQR({
+    required int departmentId,
+    String? qrCode,
+  }) async {
+    if (!canCheckIn.value) {
+      ToastHelper.showError('Already checked in today');
+      return;
+    }
+
+    isLoading.value = true;
+    try {
+      // Get location
+      final position = await _getCurrentLocation();
+      if (position == null) return;
+
+      final response = await provider.checkIn(
+        departmentId: departmentId,
+        latitude: position.latitude,
+        longitude: position.longitude,
+        scanMethod: 'qr',
+      );
+
+      if (response.success) {
+        todayAttendance.value = response.attendance;
+        canCheckIn.value = false;
+        canCheckOut.value = true;
+        ToastHelper.showSuccess(response.message);
+
+        // Show geofence warning if outside
+        if (response.geofence != null && !response.geofence!.withinGeofence) {
+          ToastHelper.showWarning(
+            'Warning: You are ${response.geofence!.distance?.toStringAsFixed(0)}m outside the geofence',
+          );
+        }
+      } else {
+        ToastHelper.showError(response.message);
+      }
+    } catch (e) {
+      ToastHelper.showError('Check-in failed. Please try again.');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Check-out with QR code
+  Future<void> checkOutWithQR({
+    required int departmentId,
+    String? qrCode,
+  }) async {
+    if (!canCheckOut.value) {
+      ToastHelper.showError('Please check in first');
+      return;
+    }
+
+    isLoading.value = true;
+    try {
+      // Get location
+      final position = await _getCurrentLocation();
+      if (position == null) return;
+
+      final response = await provider.checkOut(
+        departmentId: departmentId,
+        latitude: position.latitude,
+        longitude: position.longitude,
+        scanMethod: 'qr',
+      );
+
+      if (response.success) {
+        todayAttendance.value = response.attendance;
+        canCheckOut.value = false;
+        ToastHelper.showSuccess(response.message);
+
+        // Show geofence warning if outside
+        if (response.geofence != null && !response.geofence!.withinGeofence) {
+          ToastHelper.showWarning(
+            'Warning: You are ${response.geofence!.distance?.toStringAsFixed(0)}m outside the geofence',
+          );
+        }
+      } else {
+        ToastHelper.showError(response.message);
+      }
+    } catch (e) {
+      ToastHelper.showError('Check-out failed. Please try again.');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Refresh attendance data
+  @override
+  Future<void> refresh() async {
+    await _loadTodayAttendance();
+  }
+
+  /// Simple check-in (uses default department from employee profile)
   Future<void> checkIn() async {
-    if (!canCheckIn) return;
-
-    isLoading.value = true;
-    try {
-      final attendance = await provider.checkIn('1');
-      todayAttendance.value = attendance;
-      ToastHelper.showSuccess('Checked in at ${attendance.checkInTimeFormatted}');
-    } catch (e) {
-      ToastHelper.showError('Failed to check in. Please try again.');
-    } finally {
-      isLoading.value = false;
-    }
+    // TODO: Get department ID from employee profile or allow selection
+    // For now, we'll show an error asking to use QR scan
+    ToastHelper.showInfo('Please scan the department QR code to check in');
   }
 
+  /// Simple check-out (uses default department from employee profile)
   Future<void> checkOut() async {
-    if (!canCheckOut || todayAttendance.value == null) return;
-
-    isLoading.value = true;
-    try {
-      final attendance = await provider.checkOut(todayAttendance.value!);
-      todayAttendance.value = attendance;
-      ToastHelper.showSuccess('Checked out at ${attendance.checkOutTimeFormatted}');
-    } catch (e) {
-      ToastHelper.showError('Failed to check out. Please try again.');
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  // QR Code check in/out
-  Future<void> checkInWithQR(String qrCode) async {
-    if (!canCheckIn) return;
-
-    isLoading.value = true;
-    try {
-      final attendance = await provider.checkIn('1');
-      todayAttendance.value = attendance;
-      ToastHelper.showSuccess('QR Check-in at ${attendance.checkInTimeFormatted}');
-    } catch (e) {
-      ToastHelper.showError('QR Check-in failed. Please try again.');
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  Future<void> checkOutWithQR(String qrCode) async {
-    if (!canCheckOut || todayAttendance.value == null) return;
-
-    isLoading.value = true;
-    try {
-      final attendance = await provider.checkOut(todayAttendance.value!);
-      todayAttendance.value = attendance;
-      ToastHelper.showSuccess('QR Check-out at ${attendance.checkOutTimeFormatted}');
-    } catch (e) {
-      ToastHelper.showError('QR Check-out failed. Please try again.');
-    } finally {
-      isLoading.value = false;
-    }
+    // TODO: Get department ID from employee profile or allow selection
+    // For now, we'll show an error asking to use QR scan
+    ToastHelper.showInfo('Please scan the department QR code to check out');
   }
 }

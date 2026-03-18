@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/utils/toast_helper.dart';
@@ -77,13 +78,52 @@ class MainView extends GetView<MainController> {
 
     if (result != null) {
       final attendanceController = Get.find<AttendanceController>();
-      if (attendanceController.canCheckIn) {
-        attendanceController.checkInWithQR(result);
-      } else if (attendanceController.canCheckOut) {
-        attendanceController.checkOutWithQR(result);
+
+      // Parse QR code to extract department ID
+      // Expected QR format: {"type":"department","department_id":1,...}
+      final departmentId = _parseDepartmentId(result);
+      if (departmentId == null) {
+        ToastHelper.showError('invalid_qr_code'.tr);
+        return;
+      }
+
+      if (attendanceController.canCheckIn.value) {
+        attendanceController.checkInWithQR(
+          departmentId: departmentId,
+          qrCode: result,
+        );
+      } else if (attendanceController.canCheckOut.value) {
+        attendanceController.checkOutWithQR(
+          departmentId: departmentId,
+          qrCode: result,
+        );
       } else {
         ToastHelper.showInfo('already_completed_attendance'.tr);
       }
+    }
+  }
+
+  /// Parse department ID from QR code JSON
+  int? _parseDepartmentId(String qrCode) {
+    try {
+      // Try to parse as JSON (expected format: {"type":"department","department_id":1,...})
+      if (qrCode.trim().startsWith('{')) {
+        final jsonData = jsonDecode(qrCode) as Map<String, dynamic>;
+        if (jsonData['department_id'] != null) {
+          return int.tryParse(jsonData['department_id'].toString());
+        }
+      }
+
+      // Try query string format: department_id=1&...
+      final uri = Uri.parse('?$qrCode');
+      if (uri.queryParameters['department_id'] != null) {
+        return int.tryParse(uri.queryParameters['department_id']!);
+      }
+
+      // Try direct number
+      return int.tryParse(qrCode);
+    } catch (e) {
+      return null;
     }
   }
 }

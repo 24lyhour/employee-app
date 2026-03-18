@@ -1,26 +1,8 @@
-import 'package:get/get.dart';
 import '../models/employee_model.dart';
-import '../../../../config/flavor_config.dart';
+import '../../../../core/services/base_provider.dart';
 import '../../../../core/services/storage_service.dart';
 
-class AuthProvider extends GetConnect {
-  @override
-  void onInit() {
-    httpClient.baseUrl = AppFlavorConfig.baseUrl;
-    httpClient.timeout = const Duration(seconds: 30);
-
-    // Add auth header for protected routes
-    httpClient.addRequestModifier<dynamic>((request) async {
-      final token = StorageService.getToken();
-      if (token != null) {
-        request.headers['Authorization'] = 'Bearer $token';
-      }
-      request.headers['Accept'] = 'application/json';
-      request.headers['Content-Type'] = 'application/json';
-      return request;
-    });
-  }
-
+class AuthProvider extends BaseProvider {
   /// Login with email/phone and password
   Future<LoginResponse> login({
     String? email,
