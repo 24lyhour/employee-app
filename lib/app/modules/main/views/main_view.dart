@@ -16,60 +16,65 @@ class MainView extends GetView<MainController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Obx(() => IndexedStack(
-            index: controller.currentIndex.value,
-            children: const [
-              HomeView(),
-              AttendanceView(),
-              HistoryView(),
-              ProfileView(),
-            ],
-          )),
-      bottomNavigationBar: Obx(() => Container(
-            padding: const EdgeInsets.only(top: 8, bottom: 8),
-            decoration: const BoxDecoration(
-              color: Color(0xFFF8FFF0),
-              border: Border(top: BorderSide(color: Color(0xFFE5E7EB), width: 0.5)),
+      body: Obx(
+        () => IndexedStack(
+          index: controller.currentIndex.value,
+          children: const [
+            HomeView(),
+            AttendanceView(),
+            HistoryView(),
+            ProfileView(),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Obx(
+        () => Container(
+          padding: const EdgeInsets.only(top: 8, bottom: 8),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            border: Border(
+              top: BorderSide(color: Theme.of(context).colorScheme.outlineVariant, width: 0.5),
             ),
-            child: SafeArea(
-              top: false,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _NavItem(
-                    icon: Icons.home_outlined,
-                    selectedIcon: Icons.home,
-                    label: 'home'.tr,
-                    isSelected: controller.currentIndex.value == 0,
-                    onTap: () => controller.changePage(0),
-                  ),
-                  _NavItem(
-                    icon: Icons.fingerprint_outlined,
-                    selectedIcon: Icons.fingerprint,
-                    label: 'attendance'.tr,
-                    isSelected: controller.currentIndex.value == 1,
-                    onTap: () => controller.changePage(1),
-                  ),
-                  _ScanButton(onTap: () => _openScanner(context)),
-                  _NavItem(
-                    icon: Icons.history_outlined,
-                    selectedIcon: Icons.history,
-                    label: 'history'.tr,
-                    isSelected: controller.currentIndex.value == 2,
-                    onTap: () => controller.changePage(2),
-                  ),
-                  _NavItem(
-                    icon: Icons.person_outlined,
-                    selectedIcon: Icons.person,
-                    label: 'profile'.tr,
-                    isSelected: controller.currentIndex.value == 3,
-                    onTap: () => controller.changePage(3),
-                  ),
-                ],
-              ),
+          ),
+          child: SafeArea(
+            top: false,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _NavItem(
+                  icon: Icons.home_outlined,
+                  selectedIcon: Icons.home,
+                  label: 'home'.tr,
+                  isSelected: controller.currentIndex.value == 0,
+                  onTap: () => controller.changePage(0),
+                ),
+                _NavItem(
+                  icon: Icons.fingerprint_outlined,
+                  selectedIcon: Icons.fingerprint,
+                  label: 'attendance'.tr,
+                  isSelected: controller.currentIndex.value == 1,
+                  onTap: () => controller.changePage(1),
+                ),
+                _ScanButton(onTap: () => _openScanner(context)),
+                _NavItem(
+                  icon: Icons.history_outlined,
+                  selectedIcon: Icons.history,
+                  label: 'history'.tr,
+                  isSelected: controller.currentIndex.value == 2,
+                  onTap: () => controller.changePage(2),
+                ),
+                _NavItem(
+                  icon: Icons.person_outlined,
+                  selectedIcon: Icons.person,
+                  label: 'profile'.tr,
+                  isSelected: controller.currentIndex.value == 3,
+                  onTap: () => controller.changePage(3),
+                ),
+              ],
             ),
-          )),
+          ),
+        ),
+      ),
     );
   }
 
@@ -145,8 +150,8 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const primaryColor = Color(0xFF5EA500);
-    const unselectedColor = Color(0xFF6B7280);
+    final primaryColor = Theme.of(context).colorScheme.primary;
+    final unselectedColor = Theme.of(context).colorScheme.onSurfaceVariant;
 
     return Material(
       color: Colors.transparent,
@@ -190,27 +195,24 @@ class _ScanButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Theme.of(context).colorScheme.primary;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          color: const Color(0xFF5EA500),
+          color: primaryColor,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF5EA500).withValues(alpha: 0.3),
+              color: primaryColor.withValues(alpha: 0.3),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
           ],
         ),
-        child: const Icon(
-          Icons.qr_code_scanner,
-          color: Colors.white,
-          size: 22,
-        ),
+        child: Icon(Icons.qr_code_scanner, color: Theme.of(context).colorScheme.onPrimary, size: 22),
       ),
     );
   }

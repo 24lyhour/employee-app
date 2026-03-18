@@ -242,4 +242,17 @@ const Map<String, String> zh = {
   'save_changes': '保存更改',
   'camera_not_available': '相机不可用',
   'failed_to_pick_image': '选择图片失败',
+  'profile_updated': '个人资料更新成功',
+  'failed_to_update_profile': '更新个人资料失败',
+  'error_occurred': '发生错误',
+  'school': '学校',
+
+  // Professional Information
+  'professional_info': '职业信息',
+  'job_title': '职位',
+  'employee_type': '员工类型',
+  'hire_date': '入职日期',
+  'probation_status': '试用期状态',
+  'on_probation': '试用期中',
+  'permanent': '正式员工',
 };

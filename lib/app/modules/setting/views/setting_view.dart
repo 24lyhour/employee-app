@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../core/constants/app_constants.dart';
+import '../../../core/theme/app_colors.dart';
 import '../controllers/setting_controller.dart';
 
 class SettingView extends GetView<SettingController> {
@@ -9,9 +9,7 @@ class SettingView extends GetView<SettingController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: Text('settings'.tr),
       ),
       body: SingleChildScrollView(
@@ -135,7 +133,6 @@ class SettingView extends GetView<SettingController> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -157,7 +154,7 @@ class SettingView extends GetView<SettingController> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: Theme.of(context).colorScheme.outlineVariant,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -173,7 +170,7 @@ class SettingView extends GetView<SettingController> {
               Text(
                 'enter_current_new_password'.tr,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textSecondary,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
               ),
               const SizedBox(height: 24),
@@ -237,10 +234,6 @@ class SettingView extends GetView<SettingController> {
                       Navigator.pop(context);
                     }
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                  ),
                   child: Text('update_password'.tr),
                 ),
               ),
@@ -262,7 +255,6 @@ class SettingView extends GetView<SettingController> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -288,7 +280,7 @@ class SettingView extends GetView<SettingController> {
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: Colors.grey[300],
+                          color: Theme.of(context).colorScheme.outlineVariant,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -313,7 +305,7 @@ class SettingView extends GetView<SettingController> {
                               ? 'enter_6_digit_code'.tr
                               : 'create_new_password'.tr,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.textSecondary,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                     ),
                     const SizedBox(height: 24),
@@ -346,10 +338,6 @@ class SettingView extends GetView<SettingController> {
                               controller.sendOtp(emailController.text);
                             }
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: Colors.white,
-                          ),
                           child: Text('send_otp'.tr),
                         ),
                       ),
@@ -379,7 +367,8 @@ class SettingView extends GetView<SettingController> {
                         children: [
                           Text(
                             'didnt_receive_code'.tr,
-                            style: TextStyle(color: AppColors.textSecondary),
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurfaceVariant),
                           ),
                           TextButton(
                             onPressed: () =>
@@ -397,10 +386,6 @@ class SettingView extends GetView<SettingController> {
                               controller.verifyOtp(otpController.text);
                             }
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: Colors.white,
-                          ),
                           child: Text('verify_otp'.tr),
                         ),
                       ),
@@ -453,10 +438,6 @@ class SettingView extends GetView<SettingController> {
                               Navigator.pop(context);
                             }
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            foregroundColor: Colors.white,
-                          ),
                           child: Text('reset_password'.tr),
                         ),
                       ),
@@ -475,7 +456,6 @@ class SettingView extends GetView<SettingController> {
   void _showLanguageDialog(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -490,7 +470,7 @@ class SettingView extends GetView<SettingController> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey[300],
+                  color: Theme.of(context).colorScheme.outlineVariant,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -557,7 +537,7 @@ class SettingView extends GetView<SettingController> {
             },
             child: Text(
               'delete'.tr,
-              style: TextStyle(color: AppColors.error),
+              style: const TextStyle(color: AppColors.error),
             ),
           ),
         ],
@@ -578,7 +558,7 @@ class _SectionHeader extends StatelessWidget {
       title,
       style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
-            color: color ?? AppColors.textPrimary,
+            color: color,
           ),
     );
   }
@@ -610,7 +590,7 @@ class _SettingItem extends StatelessWidget {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: (iconColor ?? AppColors.primary).withValues(alpha: 0.1),
+            color: (iconColor ?? AppColors.primary).withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
@@ -629,7 +609,7 @@ class _SettingItem extends StatelessWidget {
         subtitle: Text(
           subtitle,
           style: TextStyle(
-            color: AppColors.textSecondary,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontSize: 12,
           ),
         ),
@@ -661,7 +641,7 @@ class _LanguageOption extends StatelessWidget {
         title: Text(title),
         subtitle: Text(subtitle),
         trailing: isSelected
-            ? Icon(Icons.check_circle, color: AppColors.primary)
+            ? const Icon(Icons.check_circle, color: AppColors.primary)
             : null,
         onTap: onTap,
       ),

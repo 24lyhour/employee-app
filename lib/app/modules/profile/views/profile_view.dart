@@ -1,6 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../core/constants/app_constants.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/clock_loading_widget.dart';
 import '../../../routes/app_pages.dart';
 import '../controllers/profile_controller.dart';
@@ -11,9 +12,7 @@ class ProfileView extends GetView<ProfileController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: Text('profile'.tr),
         actions: [
           Obx(() => controller.isRefreshing.value
@@ -48,28 +47,39 @@ class ProfileView extends GetView<ProfileController> {
             padding: const EdgeInsets.all(24),
             child: Column(
               children: [
-                // Avatar
-                CircleAvatar(
-                  radius: 50,
-                  backgroundColor:
-                      Theme.of(context).colorScheme.primaryContainer,
-                  backgroundImage: employee.avatarUrl != null
-                      ? NetworkImage(employee.avatarUrl!)
-                      : null,
-                  child: employee.avatarUrl == null
-                      ? Text(
-                          employee.fullName.isNotEmpty
-                              ? employee.fullName[0].toUpperCase()
-                              : 'E',
-                          style:
-                              Theme.of(context).textTheme.displaySmall?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onPrimaryContainer,
-                                  ),
-                        )
-                      : null,
-                ),
+                // Avatar with CachedNetworkImage
+                Obx(() {
+                  final emp = controller.employee.value;
+                  final avatarUrl = emp?.avatarUrl ?? '';
+                  final initial = emp?.fullName.isNotEmpty == true
+                      ? emp!.fullName[0].toUpperCase()
+                      : 'E';
+
+                  return CachedNetworkImage(
+                    key: ValueKey('avatar_${controller.avatarKey.value}_$avatarUrl'),
+                    imageUrl: avatarUrl,
+                    imageBuilder: (context, imageProvider) => CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                      backgroundImage: imageProvider,
+                    ),
+                    placeholder: (context, url) => CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                      child: const CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                    errorWidget: (context, url, error) => CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                      child: Text(
+                        initial,
+                        style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                              color: Theme.of(context).colorScheme.onPrimaryContainer,
+                            ),
+                      ),
+                    ),
+                  );
+                }),
                 const SizedBox(height: 16),
                 // Name
                 Text(
@@ -98,40 +108,74 @@ class ProfileView extends GetView<ProfileController> {
                   ),
                 const SizedBox(height: 32),
 
-                // Info Cards
+                // Info Cards - Always show all fields
                 _InfoCard(
                   icon: Icons.badge_outlined,
                   label: 'employee_id'.tr,
                   value: employee.employeeCode,
                 ),
                 const SizedBox(height: 12),
-                if (employee.email != null)
-                  _InfoCard(
-                    icon: Icons.email_outlined,
-                    label: 'email'.tr,
-                    value: employee.email!,
+                _InfoCard(
+                  icon: Icons.email_outlined,
+                  label: 'email'.tr,
+                  value: employee.email ?? '-',
+                ),
+                const SizedBox(height: 12),
+                _InfoCard(
+                  icon: Icons.phone_outlined,
+                  label: 'phone_number'.tr,
+                  value: employee.phoneNumber ?? '-',
+                ),
+                const SizedBox(height: 12),
+                _InfoCard(
+                  icon: Icons.business_outlined,
+                  label: 'school'.tr,
+                  value: employee.school?.name ?? '-',
+                ),
+                const SizedBox(height: 12),
+                _InfoCard(
+                  icon: Icons.apartment_outlined,
+                  label: 'department'.tr,
+                  value: employee.department?.name ?? '-',
+                ),
+                const SizedBox(height: 24),
+
+                // Professional Information Section
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 4, bottom: 12),
+                    child: Text(
+                      'professional_info'.tr,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
                   ),
-                if (employee.email != null) const SizedBox(height: 12),
-                if (employee.phoneNumber != null)
-                  _InfoCard(
-                    icon: Icons.phone_outlined,
-                    label: 'phone'.tr,
-                    value: employee.phoneNumber!,
-                  ),
-                if (employee.phoneNumber != null) const SizedBox(height: 12),
-                if (employee.school != null)
-                  _InfoCard(
-                    icon: Icons.business_outlined,
-                    label: 'school'.tr,
-                    value: employee.school!.name,
-                  ),
-                if (employee.school != null) const SizedBox(height: 12),
-                if (employee.department != null)
-                  _InfoCard(
-                    icon: Icons.apartment_outlined,
-                    label: 'department'.tr,
-                    value: employee.department!.name,
-                  ),
+                ),
+                _InfoCard(
+                  icon: Icons.work_outline,
+                  label: 'job_title'.tr,
+                  value: employee.jobTitle ?? '-',
+                ),
+                const SizedBox(height: 12),
+                _InfoCard(
+                  icon: Icons.category_outlined,
+                  label: 'employee_type'.tr,
+                  value: employee.employeeType ?? '-',
+                ),
+                const SizedBox(height: 12),
+                _InfoCard(
+                  icon: Icons.calendar_today_outlined,
+                  label: 'hire_date'.tr,
+                  value: employee.hireDate ?? '-',
+                ),
+                const SizedBox(height: 12),
+                _InfoCard(
+                  icon: Icons.hourglass_empty_outlined,
+                  label: 'probation_status'.tr,
+                  value: employee.isOnProbation ? 'on_probation'.tr : 'permanent'.tr,
+                ),
                 const SizedBox(height: 32),
 
                 // Menu Items - Primary Actions
@@ -153,9 +197,9 @@ class ProfileView extends GetView<ProfileController> {
                   label: 'edit_profile'.tr,
                   onTap: () async {
                     final result = await Get.toNamed(Routes.PROFILE_EDIT);
-                    // Refresh profile if updated
+                    // Refresh profile if updated (clear cache to refresh avatar)
                     if (result == true) {
-                      controller.loadEmployee();
+                      controller.loadEmployee(clearCache: true);
                     }
                   },
                 ),

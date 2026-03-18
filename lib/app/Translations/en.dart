@@ -244,4 +244,17 @@ const Map<String, String> en = {
   'save_changes': 'Save Changes',
   'camera_not_available': 'Camera not available',
   'failed_to_pick_image': 'Failed to pick image',
+  'profile_updated': 'Profile updated successfully',
+  'failed_to_update_profile': 'Failed to update profile',
+  'error_occurred': 'An error occurred',
+  'school': 'School',
+
+  // Professional Information
+  'professional_info': 'Professional Information',
+  'job_title': 'Job Title',
+  'employee_type': 'Employee Type',
+  'hire_date': 'Hire Date',
+  'probation_status': 'Probation Status',
+  'on_probation': 'On Probation',
+  'permanent': 'Permanent',
 };

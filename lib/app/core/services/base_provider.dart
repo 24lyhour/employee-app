@@ -17,7 +17,9 @@ abstract class BaseProvider extends GetConnect {
         request.headers['Authorization'] = 'Bearer $token';
       }
       request.headers['Accept'] = 'application/json';
-      request.headers['Content-Type'] = 'application/json';
+      // Don't override Content-Type - let GetX set it automatically
+      // For FormData it will set multipart/form-data with boundary
+      // For regular requests it will set application/json
       return request;
     });
 

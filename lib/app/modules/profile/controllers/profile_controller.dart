@@ -1,4 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get/get.dart';
+import '../../../core/services/storage_service.dart';
 import '../../../core/utils/toast_helper.dart';
 import '../../auth/data/models/employee_model.dart';
 import '../../auth/data/providers/auth_provider.dart';
@@ -11,6 +15,7 @@ class ProfileController extends GetxController {
   final employee = Rxn<EmployeeModel>();
   final isLoading = false.obs;
   final isRefreshing = false.obs;
+  final avatarKey = 0.obs; // Key to force avatar refresh
 
   @override
   void onInit() {
@@ -19,9 +24,15 @@ class ProfileController extends GetxController {
   }
 
   /// Load employee from storage or API
-  Future<void> loadEmployee() async {
+  Future<void> loadEmployee({bool clearCache = false}) async {
     isLoading.value = true;
     try {
+      // Clear image cache if requested (e.g., after profile update)
+      if (clearCache) {
+        await _clearAvatarCache();
+        avatarKey.value++; // Increment key to force widget rebuild
+      }
+
       final emp = await authProvider.getCurrentEmployee();
       if (emp != null) {
         employee.value = emp;
@@ -40,10 +51,15 @@ class ProfileController extends GetxController {
   Future<void> refreshProfile() async {
     isRefreshing.value = true;
     try {
+      // Clear image cache to get fresh avatar
+      await _clearAvatarCache();
+      avatarKey.value++;
+
       final response = await authProvider.getProfile();
       if (response.success && response.employee != null) {
         employee.value = response.employee;
-        ToastHelper.showSuccess('Profile updated');
+        // Save updated employee to storage
+        await StorageService.saveEmployee(response.employee!.toJson());
       } else {
         ToastHelper.showError(response.message ?? 'Failed to refresh profile');
       }
@@ -51,6 +67,22 @@ class ProfileController extends GetxController {
       ToastHelper.showError('Connection error');
     } finally {
       isRefreshing.value = false;
+    }
+  }
+
+  /// Clear avatar image cache
+  Future<void> _clearAvatarCache() async {
+    // Clear Flutter's image cache
+    imageCache.clear();
+    imageCache.clearLiveImages();
+
+    // Clear CachedNetworkImage cache
+    await DefaultCacheManager().emptyCache();
+
+    // Also evict specific avatar URL if exists
+    final avatarUrl = employee.value?.avatarUrl;
+    if (avatarUrl != null && avatarUrl.isNotEmpty) {
+      await CachedNetworkImage.evictFromCache(avatarUrl);
     }
   }
 

@@ -1,20 +1,20 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../controllers/profile_edit_controller.dart';
 
 class ProfileEditView extends GetView<ProfileEditController> {
   const ProfileEditView({super.key});
 
-  static const _primaryColor = Color(0xFF5EA500);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: AppColors.backgroundSecondary,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.surface,
         title: Text('edit_profile'.tr),
         centerTitle: true,
         elevation: 0,
@@ -57,9 +57,9 @@ class ProfileEditView extends GetView<ProfileEditController> {
                       prefixIcon: Icons.person,
                     ),
                     const SizedBox(height: 16),
-                    _buildGenderSelector(context),
+                    _buildGenderDisplay(),
                     const SizedBox(height: 16),
-                    _buildDateOfBirthSelector(context),
+                    _buildDateOfBirthDisplay(),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -125,17 +125,40 @@ class ProfileEditView extends GetView<ProfileEditController> {
 
             return Stack(
               children: [
-                CircleAvatar(
-                  radius: 50,
-                  backgroundColor: Colors.grey.shade200,
-                  backgroundImage: avatarPath != null
-                      ? FileImage(File(avatarPath))
-                      : (avatarUrl != null ? NetworkImage(avatarUrl) : null)
-                          as ImageProvider?,
-                  child: avatarPath == null && avatarUrl == null
-                      ? Icon(Icons.person, size: 50, color: Colors.grey.shade400)
-                      : null,
-                ),
+                // Show selected local file or cached network image
+                if (avatarPath != null)
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundColor: AppColors.disabled,
+                    backgroundImage: FileImage(File(avatarPath)),
+                  )
+                else if (avatarUrl != null && avatarUrl.isNotEmpty)
+                  CachedNetworkImage(
+                    imageUrl: avatarUrl,
+                    imageBuilder: (context, imageProvider) => CircleAvatar(
+                      radius: 50,
+                      backgroundColor: AppColors.disabled,
+                      backgroundImage: imageProvider,
+                    ),
+                    placeholder: (context, url) => CircleAvatar(
+                      radius: 50,
+                      backgroundColor: AppColors.disabled,
+                      child: const CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                    errorWidget: (context, url, error) => CircleAvatar(
+                      radius: 50,
+                      backgroundColor: AppColors.disabled,
+                      child: const Icon(Icons.person,
+                          size: 50, color: AppColors.iconSecondary),
+                    ),
+                  )
+                else
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundColor: AppColors.disabled,
+                    child: const Icon(Icons.person,
+                        size: 50, color: AppColors.iconSecondary),
+                  ),
                 Positioned(
                   bottom: 0,
                   right: 0,
@@ -145,14 +168,14 @@ class ProfileEditView extends GetView<ProfileEditController> {
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: _primaryColor,
+                        color: AppColors.primary,
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 2),
+                        border: Border.all(color: AppColors.surface, width: 2),
                       ),
                       child: const Icon(
                         Icons.camera_alt,
                         size: 16,
-                        color: Colors.white,
+                        color: AppColors.surface,
                       ),
                     ),
                   ),
@@ -163,8 +186,8 @@ class ProfileEditView extends GetView<ProfileEditController> {
           const SizedBox(height: 8),
           Text(
             'tap_to_change_photo'.tr,
-            style: TextStyle(
-              color: Colors.grey.shade600,
+            style: const TextStyle(
+              color: AppColors.textSecondary,
               fontSize: 12,
             ),
           ),
@@ -186,7 +209,8 @@ class ProfileEditView extends GetView<ProfileEditController> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.camera_alt),
+                leading:
+                    const Icon(Icons.camera_alt, color: AppColors.iconPrimary),
                 title: Text('camera'.tr),
                 onTap: () {
                   Get.back();
@@ -194,7 +218,8 @@ class ProfileEditView extends GetView<ProfileEditController> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.photo_library),
+                leading: const Icon(Icons.photo_library,
+                    color: AppColors.iconPrimary),
                 title: Text('gallery'.tr),
                 onTap: () {
                   Get.back();
@@ -215,13 +240,13 @@ class ProfileEditView extends GetView<ProfileEditController> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
-            color: Colors.grey.shade100,
+            color: AppColors.cardShadow,
             blurRadius: 6,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -232,19 +257,20 @@ class ProfileEditView extends GetView<ProfileEditController> {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                Icon(icon, size: 20, color: _primaryColor),
+                Icon(icon, size: 20, color: AppColors.primary),
                 const SizedBox(width: 8),
                 Text(
                   title,
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ],
             ),
           ),
-          const Divider(height: 1),
+          const Divider(height: 1, color: AppColors.divider),
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(children: children),
@@ -268,10 +294,10 @@ class ProfileEditView extends GetView<ProfileEditController> {
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,
-            color: Colors.grey.shade700,
+            color: AppColors.textSecondary,
           ),
         ),
         const SizedBox(height: 8),
@@ -280,32 +306,33 @@ class ProfileEditView extends GetView<ProfileEditController> {
           validator: validator,
           keyboardType: keyboardType,
           maxLines: maxLines,
-          style: const TextStyle(fontSize: 14),
+          style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 14),
+            hintStyle:
+                const TextStyle(color: AppColors.textTertiary, fontSize: 14),
             prefixIcon: prefixIcon != null
-                ? Icon(prefixIcon, size: 20, color: Colors.grey.shade500)
+                ? Icon(prefixIcon, size: 20, color: AppColors.iconSecondary)
                 : null,
             filled: true,
-            fillColor: Colors.grey.shade50,
+            fillColor: AppColors.surfaceVariant,
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade200),
+              borderSide: const BorderSide(color: AppColors.border),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade200),
+              borderSide: const BorderSide(color: AppColors.border),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: _primaryColor, width: 1.5),
+              borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Colors.red),
+              borderSide: const BorderSide(color: AppColors.error),
             ),
           ),
         ),
@@ -313,39 +340,39 @@ class ProfileEditView extends GetView<ProfileEditController> {
     );
   }
 
-  Widget _buildGenderSelector(BuildContext context) {
+  Widget _buildGenderDisplay() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'gender'.tr,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,
-            color: Colors.grey.shade700,
+            color: AppColors.textSecondary,
           ),
         ),
         const SizedBox(height: 8),
-        // Gender is read-only - display only
         Obx(() => Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: AppColors.disabled,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade300),
+                border: Border.all(color: AppColors.borderDark),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.person_outline,
-                      size: 20, color: Colors.grey.shade500),
+                  const Icon(Icons.person_outline,
+                      size: 20, color: AppColors.iconSecondary),
                   const SizedBox(width: 12),
                   Text(
                     controller.selectedGender.value != null
-                        ? controller.getGenderLabel(controller.selectedGender.value!)
+                        ? controller
+                            .getGenderLabel(controller.selectedGender.value!)
                         : '-',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
-                      color: Colors.grey.shade600,
+                      color: AppColors.disabledText,
                     ),
                   ),
                 ],
@@ -355,38 +382,37 @@ class ProfileEditView extends GetView<ProfileEditController> {
     );
   }
 
-  Widget _buildDateOfBirthSelector(BuildContext context) {
+  Widget _buildDateOfBirthDisplay() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'date_of_birth'.tr,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,
-            color: Colors.grey.shade700,
+            color: AppColors.textSecondary,
           ),
         ),
         const SizedBox(height: 8),
-        // Date of Birth is read-only - display only
         Obx(() => Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: AppColors.disabled,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade300),
+                border: Border.all(color: AppColors.borderDark),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.calendar_today,
-                      size: 20, color: Colors.grey.shade500),
+                  const Icon(Icons.calendar_today,
+                      size: 20, color: AppColors.iconSecondary),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       controller.displayDateOfBirth,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 14,
-                        color: Colors.grey.shade600,
+                        color: AppColors.disabledText,
                       ),
                     ),
                   ),
@@ -406,13 +432,13 @@ class ProfileEditView extends GetView<ProfileEditController> {
         child: ElevatedButton(
           onPressed: isSaving ? null : controller.saveProfile,
           style: ElevatedButton.styleFrom(
-            backgroundColor: _primaryColor,
-            foregroundColor: Colors.white,
+            backgroundColor: AppColors.primary,
+            foregroundColor: AppColors.surface,
             elevation: 0,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            disabledBackgroundColor: _primaryColor.withOpacity(0.6),
+            disabledBackgroundColor: AppColors.primary.withOpacity(0.6),
           ),
           child: isSaving
               ? const SizedBox(
@@ -420,7 +446,7 @@ class ProfileEditView extends GetView<ProfileEditController> {
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.surface),
                   ),
                 )
               : Row(

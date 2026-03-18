@@ -183,14 +183,22 @@ class ProfileEditController extends GetxController {
       );
 
       if (response.success) {
-        employee.value = response.employee;
-        ToastHelper.showSuccess(response.message ?? 'Profile updated');
+        // Update local employee and storage
+        if (response.employee != null) {
+          employee.value = response.employee;
+          StorageService.saveEmployee(response.employee!.toJson());
+        }
+
+        // Show toast
+        ToastHelper.showSuccess(response.message ?? 'profile_updated'.tr);
+
+        // Go back
         Get.back(result: true);
       } else {
-        ToastHelper.showError(response.message ?? 'Failed to update profile');
+        ToastHelper.showError(response.message ?? 'failed_to_update_profile'.tr);
       }
     } catch (e) {
-      ToastHelper.showError('An error occurred');
+      ToastHelper.showError('error_occurred'.tr);
     } finally {
       isSaving.value = false;
     }

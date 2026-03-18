@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:get/get.dart';
 import '../../../../../core/services/base_provider.dart';
 import '../../../../../core/services/storage_service.dart';
@@ -28,9 +29,19 @@ class ProfileEditProvider extends BaseProvider {
 
       // Handle file upload if avatar provided
       if (avatarPath != null && avatarPath.isNotEmpty) {
+        final file = File(avatarPath);
+        final fileName = avatarPath.split('/').last;
+
+        // Debug: print file info
+        print('Uploading avatar: $fileName, size: ${file.lengthSync()} bytes');
+
         final formData = FormData({
           ...body,
-          'avatar': MultipartFile(avatarPath, filename: 'avatar.jpg'),
+          'avatar': MultipartFile(
+            file.readAsBytesSync(),
+            filename: fileName,
+            contentType: 'image/jpeg',
+          ),
         });
 
         final response = await post(
@@ -56,7 +67,11 @@ class ProfileEditProvider extends BaseProvider {
   }
 
   ProfileUpdateResponse _handleResponse(Response response) {
-    if (response.statusCode == 200) {
+    // Debug: print response for troubleshooting
+    print('Profile update response status: ${response.statusCode}');
+    print('Profile update response body: ${response.body}');
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
       final result = ProfileUpdateResponse.fromJson(response.body);
 
       // Update local storage with new employee data

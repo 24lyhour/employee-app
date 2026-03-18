@@ -44,6 +44,7 @@ dependencies:
   fl_chart: ^1.2.0
   geolocator: ^13.0.2
   form_builder_validators: ^11.3.0
+  cached_network_image: ^3.4.1
 
 dev_dependencies:
   flutter_test:

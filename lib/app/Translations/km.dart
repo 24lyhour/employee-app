@@ -244,4 +244,17 @@ const Map<String, String> km = {
   'save_changes': 'រក្សាទុកការផ្លាស់ប្តូរ',
   'camera_not_available': 'កាមេរ៉ាមិនមានទេ',
   'failed_to_pick_image': 'បរាជ័យក្នុងការជ្រើសរើសរូបភាព',
+  'profile_updated': 'កែប្រែប្រវត្តិរូបបានជោគជ័យ',
+  'failed_to_update_profile': 'បរាជ័យក្នុងការកែប្រែប្រវត្តិរូប',
+  'error_occurred': 'មានកំហុសបានកើតឡើង',
+  'school': 'សាលា',
+
+  // Professional Information
+  'professional_info': 'ព័ត៌មានវិជ្ជាជីវៈ',
+  'job_title': 'មុខតំណែង',
+  'employee_type': 'ប្រភេទបុគ្គលិក',
+  'hire_date': 'ថ្ងៃចូលធ្វើការ',
+  'probation_status': 'ស្ថានភាពសាកល្បង',
+  'on_probation': 'កំពុងសាកល្បង',
+  'permanent': 'អចិន្រ្តៃយ៍',
 };

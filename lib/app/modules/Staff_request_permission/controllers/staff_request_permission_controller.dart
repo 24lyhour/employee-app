@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import '../../../core/utils/toast_helper.dart';
 import '../data/models/permission_request_model.dart';
 import '../data/providers/permission_request_provider.dart';
 
@@ -178,12 +179,7 @@ class StaffRequestPermissionController extends GetxController {
   Future<void> submitRequest() async {
     if (!formKey.currentState!.validate()) return;
     if (selectedType.value == null) {
-      Get.snackbar(
-        'Error',
-        'Please select a permission type',
-        backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
-      );
+      ToastHelper.showError('Please select a permission type');
       return;
     }
 
@@ -214,30 +210,24 @@ class StaffRequestPermissionController extends GetxController {
         }
 
         resetForm();
+        isSubmitting.value = false;
 
-        Get.snackbar(
-          'Success',
-          response.message ?? 'Your request has been submitted',
-          backgroundColor: const Color(0xFF5EA500).withValues(alpha: 0.1),
-          colorText: const Color(0xFF5EA500),
-        );
+        // Show toast first
+        ToastHelper.showSuccess(response.message ?? 'Your request has been submitted');
+
+        // Go back to previous page
+        if (Get.context != null && Navigator.canPop(Get.context!)) {
+          Navigator.of(Get.context!).pop();
+        } else {
+          Get.back();
+        }
       } else {
-        Get.snackbar(
-          'Error',
-          response.message ?? 'Failed to submit request',
-          backgroundColor: Colors.red.shade100,
-          colorText: Colors.red.shade900,
-        );
+        isSubmitting.value = false;
+        ToastHelper.showError(response.message ?? 'Failed to submit request');
       }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to submit request. Please try again.',
-        backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
-      );
-    } finally {
       isSubmitting.value = false;
+      ToastHelper.showError('Failed to submit request. Please try again.');
     }
   }
 
@@ -262,19 +252,9 @@ class StaffRequestPermissionController extends GetxController {
           );
         }
 
-        Get.snackbar(
-          'Success',
-          response.message ?? 'Request cancelled successfully',
-          backgroundColor: const Color(0xFF5EA500).withValues(alpha: 0.1),
-          colorText: const Color(0xFF5EA500),
-        );
+        ToastHelper.showSuccess(response.message ?? 'Request cancelled successfully');
       } else {
-        Get.snackbar(
-          'Error',
-          response.message ?? 'Failed to cancel request',
-          backgroundColor: Colors.red.shade100,
-          colorText: Colors.red.shade900,
-        );
+        ToastHelper.showError(response.message ?? 'Failed to cancel request');
       }
     } finally {
       isLoading.value = false;

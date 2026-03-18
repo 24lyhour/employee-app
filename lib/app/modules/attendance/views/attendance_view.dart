@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../core/constants/app_constants.dart';
+import '../../../core/theme/app_colors.dart';
 import '../controllers/attendance_controller.dart';
 import '../widgets/check_button.dart';
 
@@ -10,9 +10,7 @@ class AttendanceView extends GetView<AttendanceController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         title: Text('attendance'.tr),
       ),
       body: Obx(() {
@@ -94,7 +92,7 @@ class _CompletedCard extends StatelessWidget {
       width: 200,
       height: 200,
       decoration: BoxDecoration(
-        color: AppColors.success.withValues(alpha: 0.1),
+        color: AppColors.success.withOpacity(0.1),
         shape: BoxShape.circle,
         border: Border.all(color: AppColors.success, width: 4),
       ),

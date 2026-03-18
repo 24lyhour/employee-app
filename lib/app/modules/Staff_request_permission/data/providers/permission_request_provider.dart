@@ -89,7 +89,8 @@ class PermissionRequestProvider extends BaseProvider {
 
       final response = await post('/api/v1/employee/permission-requests', body);
 
-      if (response.statusCode == 201) {
+      // Accept both 200 and 201 as success
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return CreatePermissionResponse.fromJson(response.body);
       } else if (response.statusCode == 422) {
         final errors = response.body['errors'] as Map<String, dynamic>?;
