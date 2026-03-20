@@ -67,19 +67,29 @@ class ProfileEditProvider extends BaseProvider {
   }
 
   ProfileUpdateResponse _handleResponse(Response response) {
-    // Debug: print response for troubleshooting
-    print('Profile update response status: ${response.statusCode}');
-    print('Profile update response body: ${response.body}');
-
     if (response.statusCode == 200 || response.statusCode == 201) {
-      final result = ProfileUpdateResponse.fromJson(response.body);
+      final body = response.body as Map<String, dynamic>?;
 
-      // Update local storage with new employee data
-      if (result.success && result.employee != null) {
-        StorageService.saveEmployee(result.employee!.toJson());
+      // Extract employee data - handle different API response structures
+      EmployeeModel? employee;
+      if (body?['employee'] != null) {
+        employee = EmployeeModel.fromJson(body!['employee']);
+      } else if (body?['data'] != null && body!['data']['employee'] != null) {
+        employee = EmployeeModel.fromJson(body['data']['employee']);
+      } else if (body?['data'] != null) {
+        employee = EmployeeModel.fromJson(body!['data']);
       }
 
-      return result;
+      // Update local storage with new employee data
+      if (employee != null) {
+        StorageService.saveEmployee(employee.toJson());
+      }
+
+      return ProfileUpdateResponse(
+        success: true,
+        message: body?['message'] ?? 'Profile updated successfully',
+        employee: employee,
+      );
     } else if (response.statusCode == 422) {
       final errors = response.body['errors'] as Map<String, dynamic>?;
       final message = errors?.values.first?.first ?? 'Validation failed';
