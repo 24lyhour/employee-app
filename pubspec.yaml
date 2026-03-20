@@ -45,6 +45,7 @@ dependencies:
   geolocator: ^13.0.2
   form_builder_validators: ^11.3.0
   cached_network_image: ^3.4.1
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -78,6 +79,9 @@ flutter:
 
   assets:
     - assets/images/
+    - .env.dev
+    - .env.staging
+    - .env.prod
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

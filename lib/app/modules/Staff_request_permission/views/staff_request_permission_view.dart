@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/widgets/clock_loading_widget.dart';
 import '../controllers/staff_request_permission_controller.dart';
 import '../widgets/widgets.dart';
 
@@ -200,7 +201,7 @@ class StaffRequestPermissionView
         return const Center(
           child: Padding(
             padding: EdgeInsets.all(20),
-            child: CircularProgressIndicator(),
+            child: ClockLoadingWidget(size: 40),
           ),
         );
       }
@@ -385,14 +386,7 @@ class StaffRequestPermissionView
             disabledBackgroundColor: _primaryColor.withValues(alpha: 0.6),
           ),
           child: controller.isSubmitting.value
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  ),
-                )
+              ? const ClockLoadingWidget(size: 20, color: Colors.white)
               : Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -419,7 +413,7 @@ class StaffRequestPermissionView
         return const Center(
           child: Padding(
             padding: EdgeInsets.all(40),
-            child: CircularProgressIndicator(),
+            child: ClockLoadingWidget(size: 40),
           ),
         );
       }
@@ -466,7 +460,7 @@ class StaffRequestPermissionView
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 child: controller.isLoadingMore.value
-                    ? const CircularProgressIndicator()
+                    ? const ClockLoadingWidget(size: 24)
                     : TextButton(
                         onPressed: controller.loadMore,
                         child: Text('load_more'.tr),

@@ -18,11 +18,7 @@ class ProfileView extends GetView<ProfileController> {
           Obx(() => controller.isRefreshing.value
               ? const Padding(
                   padding: EdgeInsets.all(16),
-                  child: SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
+                  child: ClockLoadingWidget(size: 20),
                 )
               : IconButton(
                   icon: const Icon(Icons.refresh),
@@ -66,7 +62,7 @@ class ProfileView extends GetView<ProfileController> {
                     placeholder: (context, url) => CircleAvatar(
                       radius: 50,
                       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                      child: const CircularProgressIndicator(strokeWidth: 2),
+                      child: const ClockLoadingWidget(size: 24),
                     ),
                     errorWidget: (context, url, error) => CircleAvatar(
                       radius: 50,

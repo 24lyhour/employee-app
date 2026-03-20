@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/clock_loading_widget.dart';
 import '../controllers/profile_edit_controller.dart';
 
 class ProfileEditView extends GetView<ProfileEditController> {
@@ -22,7 +23,7 @@ class ProfileEditView extends GetView<ProfileEditController> {
       ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: ClockLoadingWidget(size: 50));
         }
 
         return SingleChildScrollView(
@@ -143,7 +144,7 @@ class ProfileEditView extends GetView<ProfileEditController> {
                     placeholder: (context, url) => CircleAvatar(
                       radius: 50,
                       backgroundColor: AppColors.disabled,
-                      child: const CircularProgressIndicator(strokeWidth: 2),
+                      child: const ClockLoadingWidget(size: 24),
                     ),
                     errorWidget: (context, url, error) => CircleAvatar(
                       radius: 50,
@@ -441,14 +442,7 @@ class ProfileEditView extends GetView<ProfileEditController> {
             disabledBackgroundColor: AppColors.primary.withOpacity(0.6),
           ),
           child: isSaving
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.surface),
-                  ),
-                )
+              ? const ClockLoadingWidget(size: 20, color: AppColors.surface)
               : Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

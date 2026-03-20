@@ -25,6 +25,14 @@ class AuthProvider extends BaseProvider {
         body,
       );
 
+      // Check if response body is null
+      if (response.body == null) {
+        return LoginResponse(
+          success: false,
+          message: 'Server error: Empty response',
+        );
+      }
+
       if (response.statusCode == 200) {
         final loginResponse = LoginResponse.fromJson(response.body);
 
@@ -41,13 +49,15 @@ class AuthProvider extends BaseProvider {
         return loginResponse;
       } else if (response.statusCode == 422) {
         // Validation error
-        final errors = response.body['errors'] as Map<String, dynamic>?;
-        final message = errors?.values.first?.first ?? 'Validation failed';
-        return LoginResponse(success: false, message: message);
+        final body = response.body as Map<String, dynamic>?;
+        final errors = body?['errors'] as Map<String, dynamic>?;
+        final message = errors?.values.first?.first ?? body?['message'] ?? 'Validation failed';
+        return LoginResponse(success: false, message: message.toString());
       } else {
+        final body = response.body as Map<String, dynamic>?;
         return LoginResponse(
           success: false,
-          message: response.body['message'] ?? 'Login failed',
+          message: body?['message']?.toString() ?? 'Login failed',
         );
       }
     } catch (e) {
@@ -94,6 +104,14 @@ class AuthProvider extends BaseProvider {
     try {
       final response = await get('/api/v1/employee/auth/me');
 
+      // Check if response body is null
+      if (response.body == null) {
+        return ProfileResponse(
+          success: false,
+          message: 'Server error: Empty response',
+        );
+      }
+
       if (response.statusCode == 200) {
         return ProfileResponse.fromJson(response.body);
       } else if (response.statusCode == 401) {
@@ -104,9 +122,10 @@ class AuthProvider extends BaseProvider {
           message: 'Session expired. Please login again.',
         );
       } else {
+        final body = response.body as Map<String, dynamic>?;
         return ProfileResponse(
           success: false,
-          message: response.body['message'] ?? 'Failed to get profile',
+          message: body?['message']?.toString() ?? 'Failed to get profile',
         );
       }
     } catch (e) {

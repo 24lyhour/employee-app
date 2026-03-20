@@ -1,3 +1,11 @@
+# Environment files (keep .env.example, ignore actual env files with secrets)
+.env
+.env.local
+.env*.local
+.env.dev
+.env.staging
+.env.prod
+
 # Miscellaneous
 *.class
 *.log

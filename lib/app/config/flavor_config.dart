@@ -1,44 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_flavor/flutter_flavor.dart';
 
 enum Environment { dev, staging, prod }
 
 class AppFlavorConfig {
-  static void setupDev() {
-    FlavorConfig(
+  static Future<void> setupDev() async {
+    await dotenv.load(fileName: ".env.dev");
+    _setupFlavor(
       name: "DEV",
       color: Colors.red,
-      location: BannerLocation.topStart,
-      variables: {
-        "appName": "Employee App (Dev)",
-        "baseUrl": "http://universe.test", // Local development
-        "environment": Environment.dev,
-      },
+      environment: Environment.dev,
     );
   }
 
-  static void setupStaging() {
-    FlavorConfig(
+  static Future<void> setupStaging() async {
+    await dotenv.load(fileName: ".env.staging");
+    _setupFlavor(
       name: "STAGING",
       color: Colors.orange,
-      location: BannerLocation.topStart,
-      variables: {
-        "appName": "Employee App (Staging)",
-        "baseUrl": "https://staging.uninversal-global.online",
-        "environment": Environment.staging,
-      },
+      environment: Environment.staging,
     );
   }
 
-  static void setupProd() {
-    FlavorConfig(
+  static Future<void> setupProd() async {
+    await dotenv.load(fileName: ".env.prod");
+    _setupFlavor(
       name: "",
       color: Colors.green,
+      environment: Environment.prod,
+    );
+  }
+
+  static void _setupFlavor({
+    required String name,
+    required Color color,
+    required Environment environment,
+  }) {
+    FlavorConfig(
+      name: name,
+      color: color,
       location: BannerLocation.topStart,
       variables: {
-        "appName": "Employee App",
-        "baseUrl": "https://uninversal-global.online",
-        "environment": Environment.prod,
+        "appName": dotenv.env['APP_NAME'] ?? 'Employee App',
+        "baseUrl": dotenv.env['BASE_URL'] ?? '',
+        "environment": environment,
       },
     );
   }
